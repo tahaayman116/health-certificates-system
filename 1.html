@@ -15,7 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="content">
     <meta name="author" content="content">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http: ws: wss:; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; style-src 'self' 'unsafe-inline' data: blob: https: http:; img-src 'self' data: blob: https: http:; font-src 'self' data: blob: https: http:; connect-src 'self' data: blob: https: http: ws: wss:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * data: blob:; font-src * data: blob:; connect-src * data: blob:;">
     <link rel="icon" type="image/png" sizes="16x16" href="https://apps.paladv.workers.dev/static/newstyle/BALADYCDN/Content//Images/fav.png">
     <link rel="icon" type="image/x-icon" href="https://apps.paladv.workers.dev/static/newstyle/BALADYCDN/Content//Images/fav.ico">
     <!-- Page Title -->
@@ -55,6 +55,8 @@
         
         window.ReleaseDateGregorian = new Date();
         window.monthvalue1 = new Date().getMonth() + 1;
+        window.dayvalue1 = new Date().getDate();
+        window.yearvalue1 = new Date().getFullYear();
         
         // Complete jQuery replacement
         if (typeof $ === 'undefined') {
@@ -162,6 +164,21 @@
                             }
                         });
                         return $(found);
+                    },
+                    ajaxSend: function(handler) {
+                        // Basic implementation for ajaxSend
+                        console.log('ajaxSend handler attached');
+                        return this;
+                    },
+                    ajaxComplete: function(handler) {
+                        // Basic implementation for ajaxComplete
+                        console.log('ajaxComplete handler attached');
+                        return this;
+                    },
+                    ajaxError: function(handler) {
+                        // Basic implementation for ajaxError
+                        console.log('ajaxError handler attached');
+                        return this;
                     }
                 };
             };
