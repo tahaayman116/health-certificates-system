@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الأدمن - نظام الشهادات الصحية</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #007bff;
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.4rem;
+            color: #007bff !important;
+        }
+        
+        .main-container {
+            padding: 20px 0;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background: #007bff;
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 15px 20px;
+            border: none;
+            font-weight: 500;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 6px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-danger {
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-outline-primary {
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            border: none;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .table td {
+            border: none;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+        
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn:hover {
+            color: #c82333;
+        }
+        
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-danger {
+            border-radius: 10px;
+            padding: 8px 20px;
+            font-weight: 600;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stats-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table thead th {
+            background-color: #f8f9fa;
+            border: none;
+            font-weight: 600;
+            padding: 15px;
+        }
+        
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border-color: #f1f3f4;
+        }
+        
+        .certificate-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .stats-card {
+                margin-bottom: 15px;
+            }
+            
+            .table-responsive {
+                font-size: 0.85rem;
+            }
+            
+            .btn-group .btn {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+            
+            .certificate-image {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            .form-control, .form-select {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .main-container {
+                padding: 10px 0;
+            }
+            
+            .card {
+                margin-bottom: 15px;
+            }
+            
+            .stats-number {
+                font-size: 1.5rem;
+            }
+            
+            .table th, .table td {
+                padding: 8px 4px;
+                font-size: 0.8rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                margin-bottom: 2px;
+                border-radius: 4px !important;
+            }
+        }
+        
+        /* تحسين الجدول */
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .btn-group .btn {
+            margin: 0 1px;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+        
+        /* Toast notification */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            opacity: 0.95;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 0.95;
+            }
+        }
+        
+        /* Modern Search Bar */
+        .search-container {
+            flex-shrink: 0;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 320px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.6);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .search-box:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-color: #007bff;
+        }
+        
+        .search-box:focus-within {
+            box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
+            border-color: #007bff;
+            transform: translateY(-1px);
+        }
+        
+        .search-box:focus-within .search-icon {
+            color: #007bff;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .search-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 12px 50px 12px 45px;
+            font-size: 14px;
+            background: transparent;
+            color: #333;
+        }
+        
+        .search-input::placeholder {
+            color: #adb5bd;
+            font-style: italic;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 16px;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        
+        .clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(238, 90, 82, 0.3);
+        }
+        
+        .clear-btn:hover {
+            background: linear-gradient(145deg, #ff5252, #d32f2f);
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 0 4px 12px rgba(238, 90, 82, 0.4);
+        }
+        
+        .clear-btn:active {
+            transform: translateY(-50%) scale(0.9);
+            box-shadow: 0 1px 4px rgba(238, 90, 82, 0.2);
+        }
+        
+        /* Responsive Search */
+        @media (max-width: 768px) {
+            .card-header .d-flex {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch !important;
+            }
+            
+            .search-box {
+                width: 100%;
+                max-width: none;
+            }
+            
+            .search-input {
+                padding: 14px 50px 14px 45px;
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-box {
+                border-radius: 20px;
+            }
+            
+            .search-input {
+                padding: 12px 45px 12px 40px;
+            }
+            
+            .search-icon {
+                left: 12px;
+                font-size: 14px;
+            }
+            
+            .clear-btn {
+                right: 8px;
+                width: 22px;
+                height: 22px;
+                font-size: 9px;
+            }
+        }
+        
+        /* Highlight search results */
+        .highlight {
+            background-color: #fff3cd;
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-certificate me-2"></i>
+                نظام الشهادات الصحية
+            </a>
+            <div class="navbar-nav ms-auto">
+                <button type="button" class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-container">
+        <!-- Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalCertificates">0</div>
+                    <div>إجمالي الشهادات</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stats-card" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
+                    <div class="stats-number" id="todayCertificates">0</div>
+                    <div>شهادات اليوم</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Certificate Form -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-plus-circle me-2"></i>
+                            إضافة شهادة صحية جديدة
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="certificateForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">الأمانة</label>
+                                    <input type="text" class="form-control" id="amanah">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">البلدية</label>
+                                    <input type="text" class="form-control" id="municipality">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">الاسم</label>
+                                    <input type="text" class="form-control" id="fullName">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">رقم الهوية</label>
+                                    <input type="text" class="form-control" id="idNumber">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">الجنس</label>
+                                    <select class="form-select" id="gender">
+                                        <option value="">اختر الجنس</option>
+                                        <option value="ذكر">ذكر</option>
+                                        <option value="أنثى">أنثى</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">الجنسية</label>
+                                    <input type="text" class="form-control" id="nationality">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">رقم الشهادة الصحية</label>
+                                    <input type="text" class="form-control" id="certificateNumber">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">المهنة</label>
+                                    <input type="text" class="form-control" id="profession">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">تاريخ الإصدار (ميلادي)</label>
+                                    <input type="text" class="form-control" id="issueDate" placeholder="مثال: 2024/03/15">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">تاريخ الانتهاء (ميلادي)</label>
+                                    <input type="text" class="form-control" id="expiryDate" placeholder="مثال: 2025/03/15">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">نوع الشهادة</label>
+                                    <select class="form-select" id="certificateType" title="اختر نوع الشهادة">
+                                        <option value="الشهادة الصحية الموحدة">الشهادة الصحية الموحدة</option>
+                                        <option value="شهادة صحية">شهادة صحية</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">نوع البرنامج التثقيفي</label>
+                                    <input type="text" class="form-control" id="programType" placeholder="أدخل نوع البرنامج التثقيفي">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">رقم الرخصة</label>
+                                    <input type="text" class="form-control" id="licenseNumber">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">اسم المنشأة</label>
+                                    <input type="text" class="form-control" id="facilityName">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">رقم المنشأة</label>
+                                <input type="text" class="form-control" id="facilityNumber">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">تاريخ إصدار الشهادة الصحية (هجري)</label>
+                                    <input type="text" class="form-control" id="issueDateHijri" placeholder="مثال: 1445/03/15">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">تاريخ نهاية الشهادة الصحية (هجري)</label>
+                                    <input type="text" class="form-control" id="expiryDateHijri" placeholder="مثال: 1446/03/15">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">تاريخ انتهاء البرنامج التثقيفي</label>
+                                    <input type="text" class="form-control" id="educationalProgramExpiry" placeholder="مثال: 2025/03/15">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">صورة الشخص</label>
+                                <input type="file" class="form-control" id="personImage" accept="image/*">
+                                <img id="imagePreview" class="image-preview" style="display: none;">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-save me-2"></i>
+                                حفظ الشهادة
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificates List -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-certificate me-2"></i>
+                                قائمة الشهادات المحفوظة
+                            </h5>
+                            <div class="search-container">
+                                <div class="search-box">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="search-input" id="searchInput" placeholder="ابحث في الشهادات..." onkeyup="searchCertificates()" oninput="searchCertificates()">
+                                    <button class="clear-btn" type="button" id="clearSearch" onclick="clearSearch()" style="display: none;" title="مسح البحث">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                <span id="certificatesCount">0</span> شهادة
+                                <span id="searchResults" style="display: none;"> - <span id="filteredCount">0</span> نتيجة بحث</span>
+                            </small>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-image me-1"></i> الصورة</th>
+                                        <th><i class="fas fa-user me-1"></i> الاسم</th>
+                                        <th><i class="fas fa-id-card me-1"></i> رقم الشهادة</th>
+                                        <th><i class="fas fa-calendar me-1"></i> تاريخ الإصدار</th>
+                                        <th><i class="fas fa-cogs me-1"></i> الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="certificatesTable">
+                                    <!-- سيتم ملء البيانات هنا -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        // تم إزالة Storage لتوفير الخطة المجانية
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOVmQ5HY0KrsaITu3Sl55-gjPwoKLPguE",
+            authDomain: "certificates-8b2bb.firebaseapp.com",
+            projectId: "certificates-8b2bb",
+            storageBucket: "certificates-8b2bb.firebasestorage.app",
+            messagingSenderId: "865099561039",
+            appId: "1:865099561039:web:644ec7c3ffce81cd77523a",
+            measurementId: "G-C2P94SNR6D"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make Firebase available globally
+        window.db = db;
+        window.firebaseModules = {
+            collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where
+        };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // تأمين قوي للوحة التحكم
+        function checkAuthentication() {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn');
+            const loginTime = localStorage.getItem('loginTime');
+            const currentTime = new Date().getTime();
+            
+            // التحقق من انتهاء الجلسة (24 ساعة)
+            if (isLoggedIn !== 'true' || !loginTime || (currentTime - parseInt(loginTime)) > 24 * 60 * 60 * 1000) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.replace('admin-login.html');
+                return false;
+            }
+            return true;
+        }
+
+        // فحص التوثيق عند تحميل الصفحة
+        if (!checkAuthentication()) {
+            throw new Error('Unauthorized access');
+        }
+
+        // فحص دوري كل 30 ثانية
+        setInterval(checkAuthentication, 30000);
+
+        // منع الوصول عبر التاريخ
+        window.addEventListener('beforeunload', function() {
+            if (localStorage.getItem('adminLoggedIn') !== 'true') {
+                window.location.replace('admin-login.html');
+            }
+        });
+
+        // منع الرجوع للخلف بعد تسجيل الخروج
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || window.performance && window.performance.navigation.type === 2) {
+                if (!checkAuthentication()) {
+                    window.location.replace('admin-login.html');
+                }
+            }
+        });
+
+        // متغيرات عامة
+        let certificates = [];
+        let filteredCertificates = [];
+
+        // تسجيل الخروج
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('loginTime');
+            window.location.href = 'admin-login.html';
+        }
+
+        // معاينة الصورة
+        document.getElementById('personImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // تحويل الصورة إلى Base64
+        function convertImageToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ضغط الصورة لتوفير مساحة التخزين
+        function compressImage(file, maxWidth = 300, quality = 0.8) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = () => {
+                    // حساب الأبعاد الجديدة
+                    const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+                    canvas.width = img.width * ratio;
+                    canvas.height = img.height * ratio;
+                    
+                    // رسم الصورة المضغوطة
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // تحويل إلى Base64
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                    resolve(compressedDataUrl);
+                };
+                
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // إضافة شهادة جديدة
+        document.getElementById('certificateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const certificateData = {
+                    amanah: document.getElementById('amanah').value,
+                    municipality: document.getElementById('municipality').value,
+                    fullName: document.getElementById('fullName').value,
+                    idNumber: document.getElementById('idNumber').value,
+                    gender: document.getElementById('gender').value,
+                    nationality: document.getElementById('nationality').value,
+                    certificateNumber: document.getElementById('certificateNumber').value,
+                    profession: document.getElementById('profession').value,
+                    issueDate: document.getElementById('issueDate').value,
+                    expiryDate: document.getElementById('expiryDate').value,
+                    certificateType: document.getElementById('certificateType').value,
+                    programType: document.getElementById('programType').value,
+                    licenseNumber: document.getElementById('licenseNumber').value,
+                    facilityName: document.getElementById('facilityName').value,
+                    facilityNumber: document.getElementById('facilityNumber').value,
+                    issueDateHijri: document.getElementById('issueDateHijri').value,
+                    expiryDateHijri: document.getElementById('expiryDateHijri').value,
+                    educationalProgramExpiry: document.getElementById('educationalProgramExpiry').value,
+                    createdAt: new Date().toISOString(),
+                    uniqueId: generateUniqueId()
+                };
+
+                // معالجة الصورة إذا تم اختيارها
+                const imageFile = document.getElementById('personImage').files[0];
+                if (imageFile) {
+                    // التحقق من حجم الصورة (أقل من 5MB)
+                    if (imageFile.size > 5 * 1024 * 1024) {
+                        alert('حجم الصورة كبير جداً. يرجى اختيار صورة أصغر من 5MB');
+                        return;
+                    }
+                    
+                    // ضغط وتحويل الصورة إلى Base64
+                    certificateData.imageBase64 = await compressImage(imageFile);
+                }
+
+                // حفظ البيانات في Firestore
+                await window.firebaseModules.addDoc(window.firebaseModules.collection(window.db, 'certificates'), certificateData);
+                
+                // حفظ نسخة محلية احتياطية
+                const localCertificates = JSON.parse(localStorage.getItem('certificates') || '[]');
+                localCertificates.push(certificateData);
+                localStorage.setItem('certificates', JSON.stringify(localCertificates));
+                
+                alert('تم حفظ الشهادة بنجاح!');
+                this.reset();
+                document.getElementById('imagePreview').style.display = 'none';
+                loadCertificates();
+                
+            } catch (error) {
+                console.error('خطأ في حفظ الشهادة:', error);
+                
+                // في حالة فشل Firebase، احفظ محلياً فقط
+                const certificateData = {
+                    amanah: document.getElementById('amanah').value,
+                    municipality: document.getElementById('municipality').value,
+                    fullName: document.getElementById('fullName').value,
+                    idNumber: document.getElementById('idNumber').value,
+                    gender: document.getElementById('gender').value,
+                    nationality: document.getElementById('nationality').value,
+                    certificateNumber: document.getElementById('certificateNumber').value,
+                    profession: document.getElementById('profession').value,
+                    issueDate: document.getElementById('issueDate').value,
+                    expiryDate: document.getElementById('expiryDate').value,
+                    certificateType: document.getElementById('certificateType').value,
+                    programType: document.getElementById('programType').value,
+                    licenseNumber: document.getElementById('licenseNumber').value,
+                    facilityName: document.getElementById('facilityName').value,
+                    facilityNumber: document.getElementById('facilityNumber').value,
+                    issueDateHijri: document.getElementById('issueDateHijri').value,
+                    expiryDateHijri: document.getElementById('expiryDateHijri').value,
+                    educationalProgramExpiry: document.getElementById('educationalProgramExpiry').value,
+                    createdAt: new Date().toISOString(),
+                    uniqueId: generateUniqueId(),
+                    id: 'local_' + Date.now()
+                };
+
+                const imageFile = document.getElementById('personImage').files[0];
+                if (imageFile && imageFile.size <= 5 * 1024 * 1024) {
+                    certificateData.imageBase64 = await compressImage(imageFile);
+                }
+
+                const localCertificates = JSON.parse(localStorage.getItem('certificates') || '[]');
+                localCertificates.push(certificateData);
+                localStorage.setItem('certificates', JSON.stringify(localCertificates));
+                
+                alert('تم حفظ الشهادة محلياً (Firebase غير متاح حالياً)');
+                this.reset();
+                document.getElementById('imagePreview').style.display = 'none';
+                loadCertificates();
+            }
+        });
+
+        // توليد معرف فريد
+        function generateUniqueId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // تحميل الشهادات
+        async function loadCertificates() {
+            try {
+                const querySnapshot = await window.firebaseModules.getDocs(
+                    window.firebaseModules.query(
+                        window.firebaseModules.collection(window.db, 'certificates'),
+                        window.firebaseModules.orderBy('createdAt', 'desc')
+                    )
+                );
+                
+                certificates = [];
+                querySnapshot.forEach((doc) => {
+                    certificates.push({ id: doc.id, ...doc.data() });
+                });
+                
+                displayCertificates();
+                updateStatistics();
+                
+            } catch (error) {
+                console.error('خطأ في تحميل الشهادات:', error);
+                // في حالة عدم توفر Firebase، استخدم البيانات المحلية
+                loadLocalCertificates();
+            }
+        }
+
+        // تحميل البيانات المحلية (للاختبار)
+        function loadLocalCertificates() {
+            const localData = localStorage.getItem('certificates');
+            if (localData) {
+                certificates = JSON.parse(localData);
+                displayCertificates();
+                updateStatistics();
+            }
+        }
+
+        // عرض الشهادات
+        function displayCertificates(certsToDisplay = certificates) {
+            const tbody = document.getElementById('certificatesTable');
+            tbody.innerHTML = '';
+            
+            // تحديث عداد الشهادات
+            document.getElementById('certificatesCount').textContent = certificates.length;
+            
+            if (certsToDisplay.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="fas fa-search fa-2x mb-2"></i>
+                            <div>لا توجد شهادات تطابق البحث</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            certsToDisplay.forEach(cert => {
+                const row = document.createElement('tr');
+                const issueDate = cert.issueDate ? new Date(cert.issueDate).toLocaleDateString('ar-SA') : 'غير محدد';
+                
+                row.innerHTML = `
+                    <td>
+                        ${cert.imageBase64 ? 
+                            `<img src="${cert.imageBase64}" class="certificate-image" alt="صورة">` : 
+                            cert.imageUrl ? 
+                            `<img src="${cert.imageUrl}" class="certificate-image" alt="صورة">` : 
+                            '<i class="fas fa-user-circle fa-2x text-muted"></i>'
+                        }
+                    </td>
+                    <td>
+                        <div class="fw-bold">${cert.fullName || 'غير محدد'}</div>
+                        <small class="text-muted">${cert.profession || ''}</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-primary">${cert.certificateNumber || 'غير محدد'}</span>
+                    </td>
+                    <td>
+                        <small class="text-muted">${issueDate}</small>
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewCertificate('${cert.uniqueId}')" title="عرض الشهادة">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="copyLink('${cert.uniqueId}', this)" title="نسخ الرابط">
+                                <i class="fas fa-link"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCertificate('${cert.uniqueId}', '${cert.id || ''}')" title="حذف الشهادة">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // البحث في الشهادات
+        function searchCertificates() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const searchResults = document.getElementById('searchResults');
+            const filteredCount = document.getElementById('filteredCount');
+            const clearButton = document.getElementById('clearSearch');
+            
+            // إظهار/إخفاء زر المسح
+            if (searchTerm === '') {
+                clearButton.style.display = 'none';
+                // إذا كان البحث فارغ، اعرض جميع الشهادات
+                filteredCertificates = certificates;
+                searchResults.style.display = 'none';
+                displayCertificates(certificates);
+            } else {
+                clearButton.style.display = 'block';
+                // فلترة الشهادات بناءً على البحث
+                filteredCertificates = certificates.filter(cert => {
+                    return (
+                        (cert.fullName && cert.fullName.toLowerCase().includes(searchTerm)) ||
+                        (cert.certificateNumber && cert.certificateNumber.toLowerCase().includes(searchTerm)) ||
+                        (cert.idNumber && cert.idNumber.toLowerCase().includes(searchTerm)) ||
+                        (cert.profession && cert.profession.toLowerCase().includes(searchTerm)) ||
+                        (cert.amanah && cert.amanah.toLowerCase().includes(searchTerm)) ||
+                        (cert.municipality && cert.municipality.toLowerCase().includes(searchTerm)) ||
+                        (cert.nationality && cert.nationality.toLowerCase().includes(searchTerm)) ||
+                        (cert.certificateType && cert.certificateType.toLowerCase().includes(searchTerm))
+                    );
+                });
+                
+                // عرض نتائج البحث
+                filteredCount.textContent = filteredCertificates.length;
+                searchResults.style.display = 'inline';
+                displayCertificates(filteredCertificates);
+            }
+        }
+
+        // مسح البحث
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const clearButton = document.getElementById('clearSearch');
+            
+            searchInput.value = '';
+            clearButton.style.display = 'none';
+            searchCertificates();
+            searchInput.focus();
+        }
+
+        // عرض الشهادة
+        function viewCertificate(uniqueId) {
+            const url = `1.html?id=${uniqueId}`;
+            window.open(url, '_blank');
+        }
+
+        // نسخ رابط الشهادة
+        function copyLink(uniqueId, buttonElement) {
+            const url = `${window.location.origin}/1.html?id=${uniqueId}`;
+            navigator.clipboard.writeText(url).then(() => {
+                // إظهار رسالة نجاح
+                const btn = buttonElement || event.target.closest('button');
+                const originalIcon = btn.innerHTML;
+                const originalClass = btn.className;
+                
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                btn.className = 'btn btn-sm btn-success';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalIcon;
+                    btn.className = originalClass;
+                }, 2000);
+                
+                // إظهار رسالة نجاح مؤقتة
+                const toast = document.createElement('div');
+                toast.className = 'alert alert-success toast-notification';
+                toast.innerHTML = '<i class="fas fa-check me-2"></i>تم نسخ الرابط بنجاح!';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        document.body.removeChild(toast);
+                    }
+                }, 3000);
+                
+            }).catch(err => {
+                console.error('فشل في نسخ الرابط:', err);
+                alert('فشل في نسخ الرابط. يرجى المحاولة مرة أخرى.');
+            });
+        }
+
+        // حذف شهادة
+        async function deleteCertificate(uniqueId, firebaseId = '') {
+            console.log('محاولة حذف الشهادة:', { uniqueId, firebaseId });
+            if (confirm('هل أنت متأكد من حذف هذه الشهادة؟')) {
+                try {
+                    let deleted = false;
+                    
+                    // إذا كان لدينا معرف Firebase، احذف مباشرة
+                    if (firebaseId && !firebaseId.startsWith('local_')) {
+                        try {
+                            const docRef = window.firebaseModules.doc(window.db, 'certificates', firebaseId);
+                            await window.firebaseModules.deleteDoc(docRef);
+                            deleted = true;
+                            console.log('تم حذف الشهادة من Firebase باستخدام المعرف المباشر');
+                        } catch (error) {
+                            console.log('فشل الحذف بالمعرف المباشر، سأحاول البحث بـ uniqueId');
+                        }
+                    }
+                    
+                    // إذا لم ينجح الحذف المباشر، ابحث بـ uniqueId
+                    if (!deleted) {
+                        const q = window.firebaseModules.query(
+                            window.firebaseModules.collection(window.db, 'certificates'),
+                            window.firebaseModules.where('uniqueId', '==', uniqueId)
+                        );
+                        
+                        const querySnapshot = await window.firebaseModules.getDocs(q);
+                        
+                        if (!querySnapshot.empty) {
+                            const docRef = querySnapshot.docs[0].ref;
+                            await window.firebaseModules.deleteDoc(docRef);
+                            deleted = true;
+                            console.log('تم حذف الشهادة من Firebase باستخدام البحث');
+                        }
+                    }
+                    
+                    // حذف من البيانات المحلية في جميع الحالات
+                    const localData = localStorage.getItem('certificates');
+                    if (localData) {
+                        const certificates = JSON.parse(localData);
+                        const updatedCertificates = certificates.filter(cert => cert.uniqueId !== uniqueId);
+                        localStorage.setItem('certificates', JSON.stringify(updatedCertificates));
+                    }
+                    
+                    loadCertificates();
+                    
+                    if (deleted) {
+                        alert('تم حذف الشهادة بنجاح!');
+                    } else {
+                        alert('تم حذف الشهادة من البيانات المحلية!');
+                    }
+                    
+                } catch (error) {
+                    console.error('خطأ في حذف الشهادة:', error);
+                    
+                    // في حالة فشل Firebase، احذف من البيانات المحلية على الأقل
+                    const localData = localStorage.getItem('certificates');
+                    if (localData) {
+                        const certificates = JSON.parse(localData);
+                        const updatedCertificates = certificates.filter(cert => cert.uniqueId !== uniqueId);
+                        localStorage.setItem('certificates', JSON.stringify(updatedCertificates));
+                        loadCertificates();
+                        alert('تم حذف الشهادة من البيانات المحلية!');
+                    } else {
+                        alert('حدث خطأ في حذف الشهادة.');
+                    }
+                }
+            }
+        }
+
+        // تحديث الإحصائيات
+        function updateStatistics() {
+            const total = certificates.length;
+            const today = new Date().toDateString();
+            const todayCount = certificates.filter(cert => 
+                new Date(cert.createdAt).toDateString() === today
+            ).length;
+            
+            document.getElementById('totalCertificates').textContent = total;
+            document.getElementById('todayCertificates').textContent = todayCount;
+        }
+
+        // تحميل البيانات عند بدء الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // محاولة تحميل البيانات من Firebase أو البيانات المحلية
+            setTimeout(() => {
+                loadCertificates();
+                // تنظيف localStorage من الشهادات المحذوفة
+                cleanupLocalStorage();
+            }, 1000);
+        });
+
+        // تنظيف localStorage من الشهادات المحذوفة
+        async function cleanupLocalStorage() {
+            try {
+                const localData = localStorage.getItem('certificates');
+                if (!localData) return;
+
+                const localCertificates = JSON.parse(localData);
+                const validCertificates = [];
+
+                // التحقق من كل شهادة في localStorage
+                for (const cert of localCertificates) {
+                    try {
+                        const q = window.firebaseModules.query(
+                            window.firebaseModules.collection(window.db, 'certificates'),
+                            window.firebaseModules.where('uniqueId', '==', cert.uniqueId)
+                        );
+                        
+                        const querySnapshot = await window.firebaseModules.getDocs(q);
+                        
+                        // إذا كانت الشهادة موجودة في Firebase، احتفظ بها
+                        if (!querySnapshot.empty) {
+                            validCertificates.push(cert);
+                        }
+                    } catch (error) {
+                        // في حالة خطأ، احتفظ بالشهادة
+                        validCertificates.push(cert);
+                    }
+                }
+
+                // تحديث localStorage بالشهادات الصالحة فقط
+                localStorage.setItem('certificates', JSON.stringify(validCertificates));
+                
+                console.log(`تم تنظيف localStorage: ${localCertificates.length - validCertificates.length} شهادة محذوفة`);
+            } catch (error) {
+                console.error('خطأ في تنظيف localStorage:', error);
+            }
+        }
+    </script>
+</body>
+</html>

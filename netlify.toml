@@ -1,0 +1,70 @@
+[build]
+  # مجلد النشر (المجلد الحالي)
+  publish = "."
+  
+  # لا يوجد أمر بناء مطلوب للملفات الثابتة
+  command = ""
+
+[build.environment]
+  # متغيرات البيئة (إذا كانت مطلوبة)
+  NODE_VERSION = "18"
+
+# إعادة توجيه للصفحات
+[[redirects]]
+  # إعادة توجيه الصفحة الرئيسية لصفحة تسجيل الدخول
+  from = "/"
+  to = "/admin-login.html"
+  status = 200
+
+[[redirects]]
+  # إعادة توجيه للشهادة الرئيسية
+  from = "/certificate/:id"
+  to = "/1.html?id=:id"
+  status = 200
+
+[[redirects]]
+  # إعادة توجيه للشهادة (رابط مختصر)
+  from = "/cert/:id"
+  to = "/1.html?id=:id"
+  status = 200
+
+# إعدادات الأمان
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # السماح بتحميل المحتوى من Firebase
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googleapis.com https://*.gstatic.com https://*.firebaseapp.com https://*.firebase.google.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https://*.googleapis.com https://*.firebase.google.com https://firebasestorage.googleapis.com"
+    
+    # السماح بالوصول من جميع المصادر (للتطوير)
+    Access-Control-Allow-Origin = "*"
+    
+    # تفعيل HTTPS
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    
+    # منع التضمين في إطارات أخرى
+    X-Frame-Options = "DENY"
+    
+    # منع استنتاج نوع المحتوى
+    X-Content-Type-Options = "nosniff"
+
+# إعدادات الملفات
+[[headers]]
+  for = "*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# معالجة الأخطاء
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
