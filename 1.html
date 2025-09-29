@@ -15,6 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="content">
     <meta name="author" content="content">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http: ws: wss:; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; style-src 'self' 'unsafe-inline' data: blob: https: http:; img-src 'self' data: blob: https: http:; font-src 'self' data: blob: https: http:; connect-src 'self' data: blob: https: http: ws: wss:;">
     <link rel="icon" type="image/png" sizes="16x16" href="https://apps.paladv.workers.dev/static/newstyle/BALADYCDN/Content//Images/fav.png">
     <link rel="icon" type="image/x-icon" href="https://apps.paladv.workers.dev/static/newstyle/BALADYCDN/Content//Images/fav.ico">
     <!-- Page Title -->
@@ -53,8 +54,9 @@
         };
         
         window.ReleaseDateGregorian = new Date();
+        window.monthvalue1 = new Date().getMonth() + 1;
         
-        // Basic jQuery if not loaded
+        // Complete jQuery replacement
         if (typeof $ === 'undefined') {
             window.$ = function(selector) {
                 if (typeof selector === 'function') {
@@ -65,29 +67,128 @@
                     }
                     return;
                 }
-                var elements = document.querySelectorAll(selector);
+                var elements;
+                if (typeof selector === 'string') {
+                    elements = document.querySelectorAll(selector);
+                } else if (selector && selector.nodeType) {
+                    elements = [selector];
+                } else {
+                    elements = selector || [];
+                }
+                
                 return {
                     length: elements.length,
+                    each: function(callback) {
+                        for (var i = 0; i < elements.length; i++) {
+                            callback.call(elements[i], i, elements[i]);
+                        }
+                        return this;
+                    },
                     val: function(value) {
                         if (value !== undefined) {
-                            for (var i = 0; i < elements.length; i++) {
-                                elements[i].value = value;
-                            }
+                            this.each(function() {
+                                this.value = value;
+                            });
                             return this;
                         }
                         return elements[0] ? elements[0].value : '';
                     },
                     text: function(text) {
                         if (text !== undefined) {
-                            for (var i = 0; i < elements.length; i++) {
-                                elements[i].textContent = text;
-                            }
+                            this.each(function() {
+                                this.textContent = text;
+                            });
                             return this;
                         }
                         return elements[0] ? elements[0].textContent : '';
+                    },
+                    attr: function(name, value) {
+                        if (value !== undefined) {
+                            this.each(function() {
+                                this.setAttribute(name, value);
+                            });
+                            return this;
+                        }
+                        return elements[0] ? elements[0].getAttribute(name) : null;
+                    },
+                    removeAttr: function(name) {
+                        this.each(function() {
+                            this.removeAttribute(name);
+                        });
+                        return this;
+                    },
+                    addClass: function(className) {
+                        this.each(function() {
+                            this.classList.add(className);
+                        });
+                        return this;
+                    },
+                    removeClass: function(className) {
+                        this.each(function() {
+                            this.classList.remove(className);
+                        });
+                        return this;
+                    },
+                    hide: function() {
+                        this.each(function() {
+                            this.style.display = 'none';
+                        });
+                        return this;
+                    },
+                    show: function() {
+                        this.each(function() {
+                            this.style.display = '';
+                        });
+                        return this;
+                    },
+                    on: function(event, handler) {
+                        this.each(function() {
+                            this.addEventListener(event, handler);
+                        });
+                        return this;
+                    },
+                    off: function(event, handler) {
+                        this.each(function() {
+                            this.removeEventListener(event, handler);
+                        });
+                        return this;
+                    },
+                    find: function(selector) {
+                        var found = [];
+                        this.each(function() {
+                            var children = this.querySelectorAll(selector);
+                            for (var i = 0; i < children.length; i++) {
+                                found.push(children[i]);
+                            }
+                        });
+                        return $(found);
                     }
                 };
             };
+            
+            // jQuery static methods
+            $.ajaxSetup = function(options) {
+                console.log('ajaxSetup called with:', options);
+                // Basic implementation - just log for now
+            };
+            
+            $.ajax = function(options) {
+                console.log('ajax called with:', options);
+                // Basic fetch implementation
+                return fetch(options.url, {
+                    method: options.type || 'GET',
+                    headers: options.headers || {},
+                    body: options.data
+                }).then(function(response) {
+                    return response.text();
+                }).then(function(data) {
+                    if (options.success) options.success(data);
+                }).catch(function(error) {
+                    if (options.error) options.error(error);
+                });
+            };
+            
+            window.jQuery = $;
         }
     </script>
     <!-- Layout CSS Only - No color changes -->
