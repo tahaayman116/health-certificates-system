@@ -15,7 +15,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="content">
     <meta name="author" content="content">
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * data: blob:; font-src * data: blob:; connect-src * data: blob:;">
     <link rel="icon" type="image/png" sizes="16x16" href="https://apps.paladv.workers.dev/static/newstyle/BALADYCDN/Content//Images/fav.png">
     <link rel="icon" type="image/x-icon" href="https://apps.paladv.workers.dev/static/newstyle/BALADYCDN/Content//Images/fav.ico">
     <!-- Page Title -->
@@ -178,6 +177,16 @@
                     ajaxError: function(handler) {
                         // Basic implementation for ajaxError
                         console.log('ajaxError handler attached');
+                        return this;
+                    },
+                    ajaxStop: function(handler) {
+                        // Basic implementation for ajaxStop
+                        console.log('ajaxStop handler attached');
+                        return this;
+                    },
+                    ajaxStart: function(handler) {
+                        // Basic implementation for ajaxStart
+                        console.log('ajaxStart handler attached');
                         return this;
                     }
                 };
