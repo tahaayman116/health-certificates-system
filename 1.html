@@ -37,11 +37,70 @@
     <!--<link href="https://apps.paladv.workers.dev/static/Validation.css" rel="stylesheet" type="text/css">-->
     <link href="https://apps.paladv.workers.dev/static/style.css" rel="stylesheet" type="text/css">
     <link href="https://apps.paladv.workers.dev/static/jquery.calendars.picker.css" rel="stylesheet">
+    <!-- Layout CSS Only - No color changes -->
+    <link rel="stylesheet" href="./assets/css/layout-only.css">
+    <!-- External CSS (original design) -->
     <link rel="stylesheet" media="all" href="https://apps.paladv.workers.dev/BALADYCDN/Content/muneer.min.css">
-    <!-- Fallback CSS for Netlify -->
-    <link rel="stylesheet" href="./assets/css/certificate-styles.css">
     <script src="https://apps.paladv.workers.dev/BALADYCDN/Content/muneer.min.js"></script>
     <style>
+        /* Critical CSS for layout only - NO color changes */
+        body {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        
+        .container {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 15px !important;
+        }
+        
+        .row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            margin: 0 -15px !important;
+        }
+        
+        .col-md-6 {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+            padding: 0 15px !important;
+        }
+        
+        .col-md-12 {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+            padding: 0 15px !important;
+        }
+        
+        .has-float-label {
+            position: relative !important;
+            display: block !important;
+            margin-bottom: 20px !important;
+        }
+        
+        .has-float-label > span {
+            position: absolute !important;
+            top: -8px !important;
+            right: 12px !important;
+            background: #fff !important;
+            padding: 0 8px !important;
+            font-size: 12px !important;
+            z-index: 10 !important;
+        }
+        
+        .form-control {
+            width: 100% !important;
+            text-align: right !important;
+        }
+        
+        @media (max-width: 768px) {
+            .col-md-6 {
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+            }
+        }
+        
         #focus-snail_svg {
             position: absolute;
             top: 0;
