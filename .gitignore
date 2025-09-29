@@ -41,3 +41,8 @@ logs
 # Build files
 dist/
 build/
+
+# Assets backup (keep local assets)
+!assets/
+!assets/css/
+!assets/js/
