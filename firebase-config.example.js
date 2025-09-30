@@ -1,24 +1,20 @@
 // Firebase Configuration Example
-// انسخ هذا الملف إلى firebase-config.js// مثال على إعداد Firebase
-// انسخ هذا الملف إلى firebase-config.js وأضف بياناتك الحقيقية
+// انسخ هذا الملف إلى firebase-config.js وأدخل إعداداتك الخاصة
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB6kBbVhGfAHm6EtoGBwKZN_ZI0KZo40No",
-  authDomain: "health-a9c56.firebaseapp.com",
-  projectId: "health-a9c56",
-  storageBucket: "health-a9c56.firebasestorage.app",
-  messagingSenderId: "36304681979",
-  appId: "1:36304681979:web:46ce4f2739c7dd2244295e",
-  measurementId: "G-8ZKPQJ3HK6"
-};
-
-// إعداد Firebase مع قواعد الأمان المفتوحة للتطوير
-// تأكد من تطبيق firestore.rules في Firebase Console
-// 1:123456789:web:abcdef123456"
+    apiKey: "your-api-key-here",
+    authDomain: "your-project-id.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project-id.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef123456"
 };
 
 // تصدير الإعدادات
 export default firebaseConfig;
+
+/* 
 للحصول على هذه الإعدادات:
 1. اذهب إلى Firebase Console: https://console.firebase.google.com/
 2. اختر مشروعك أو أنشئ مشروع جديد
