@@ -1370,7 +1370,14 @@
                             const docRef = window.firebaseModules.doc(window.db, 'certificates', docId);
                             await window.firebaseModules.deleteDoc(docRef);
                             deleted = true;
-                            console.log('تم حذف الإجازة المرضية من Firebase باستخدام المعرف المباشر');
+                            console.log('✅ تم حذف الإجازة المرضية من Firebase باستخدام المعرف المباشر');
+                            
+                            // التأكد من الحذف
+                            setTimeout(async () => {
+                                console.log('🔄 إعادة تحميل البيانات للتأكد من الحذف...');
+                                await loadMedicalLeaves();
+                                await updateStatistics();
+                            }, 2000);
                         } catch (error) {
                             console.log('فشل الحذف بالمعرف المباشر، سأحاول البحث بـ serviceCode و idNumber');
                         }
