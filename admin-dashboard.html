@@ -1361,20 +1361,27 @@
         async function deleteMedicalLeaveFromFirebase(docId, serviceCode, idNumber) {
             if (confirm('هل أنت متأكد من حذف هذه الإجازة المرضية؟')) {
                 try {
-                    const { doc, deleteDoc } = window.firebaseModules;
-                    await deleteDoc(doc(window.db, 'certificates', docId));
+                    console.log('محاولة حذف الإجازة المرضية:', { docId, serviceCode, idNumber });
                     
-                    console.log('تم حذف الإجازة المرضية من Firebase');
+                    // استخدام نفس طريقة حذف الشهادات
+                    const docRef = window.firebaseModules.doc(window.db, 'certificates', docId);
+                    await window.firebaseModules.deleteDoc(docRef);
+                    
+                    console.log('✅ تم حذف الإجازة المرضية من Firebase بنجاح');
+                    
+                    // حذف من localStorage أيضاً
+                    const localKey = `medical-leave-${serviceCode}-${idNumber}`;
+                    localStorage.removeItem(localKey);
                     
                     // تحديث القائمة والإحصائيات
-                    loadMedicalLeaves();
-                    updateStatistics();
+                    await loadMedicalLeaves();
+                    await updateStatistics();
                     
                     alert('تم حذف الإجازة المرضية بنجاح!');
                     
                 } catch (error) {
-                    console.error('خطأ في حذف الإجازة المرضية:', error);
-                    alert('حدث خطأ في حذف الإجازة المرضية');
+                    console.error('❌ خطأ في حذف الإجازة المرضية:', error);
+                    alert('حدث خطأ في حذف الإجازة المرضية: ' + error.message);
                 }
             }
         }
