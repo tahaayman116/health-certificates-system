@@ -3,12 +3,13 @@
 // انسخ هذا الملف إلى firebase-config.js وأضف بياناتك الحقيقية
 
 const firebaseConfig = {
-  apiKey: "your-api-key-here",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "your-app-id"
+  apiKey: "AIzaSyB6kBbVhGfAHm6EtoGBwKZN_ZI0KZo40No",
+  authDomain: "health-a9c56.firebaseapp.com",
+  projectId: "health-a9c56",
+  storageBucket: "health-a9c56.firebasestorage.app",
+  messagingSenderId: "36304681979",
+  appId: "1:36304681979:web:46ce4f2739c7dd2244295e",
+  measurementId: "G-8ZKPQJ3HK6"
 };
 
 // إعداد Firebase مع قواعد الأمان المفتوحة للتطوير
