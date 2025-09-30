@@ -229,6 +229,18 @@
                 const localData = localStorage.getItem(localKey);
                 let data = null;
                 
+                console.log('البحث عن:', localKey);
+                console.log('البيانات الموجودة:', localData);
+                
+                // عرض جميع المفاتيح المحفوظة للتشخيص
+                console.log('جميع المفاتيح المحفوظة:');
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('medical-leave-')) {
+                        console.log(key, ':', localStorage.getItem(key));
+                    }
+                }
+                
                 if (localData) {
                     data = JSON.parse(localData);
                 }
