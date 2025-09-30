@@ -1316,21 +1316,72 @@
             updateMedicalLeavesStatistics();
         }
 
-        // تحديث إحصائيات الإجازات المرضية
-        function updateMedicalLeavesStatistics() {
-            const medicalLeavesIndex = JSON.parse(localStorage.getItem('medical-leaves-index') || '[]');
-            
-            // إجمالي الإجازات المرضية
-            document.getElementById('totalMedicalLeaves').textContent = medicalLeavesIndex.length;
-            
-            // إجازات اليوم
-            const today = new Date().toDateString();
-            const todayMedicalLeaves = medicalLeavesIndex.filter(leave => {
-                const leaveDate = new Date(leave.timestamp);
-                return leaveDate.toDateString() === today;
-            }).length;
-            
-            document.getElementById('todayMedicalLeaves').textContent = todayMedicalLeaves;
+        // تحديث إحصائيات الإجازات المرضية من Firebase
+        async function updateMedicalLeavesStatistics() {
+            try {
+                if (!window.firebaseModules || !window.db) {
+                    document.getElementById('totalMedicalLeaves').textContent = '0';
+                    document.getElementById('todayMedicalLeaves').textContent = '0';
+                    return;
+                }
+
+                const { collection, query, where, getDocs } = window.firebaseModules;
+                
+                // البحث عن الإجازات المرضية في Firebase
+                const q = query(
+                    collection(window.db, 'certificates'),
+                    where('serviceCode', '!=', null)
+                );
+                
+                const querySnapshot = await getDocs(q);
+                let totalMedicalLeaves = 0;
+                let todayMedicalLeaves = 0;
+                const today = new Date().toDateString();
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // التأكد أن هذا إجازة مرضية وليس شهادة صحية
+                    if (data.serviceCode && data.idNumber && !data.amanah) {
+                        totalMedicalLeaves++;
+                        
+                        // إحصائيات اليوم
+                        const leaveDate = new Date(data.created_at);
+                        if (leaveDate.toDateString() === today) {
+                            todayMedicalLeaves++;
+                        }
+                    }
+                });
+                
+                document.getElementById('totalMedicalLeaves').textContent = totalMedicalLeaves;
+                document.getElementById('todayMedicalLeaves').textContent = todayMedicalLeaves;
+                
+            } catch (error) {
+                console.error('خطأ في تحديث إحصائيات الإجازات المرضية:', error);
+                document.getElementById('totalMedicalLeaves').textContent = '0';
+                document.getElementById('todayMedicalLeaves').textContent = '0';
+            }
+        }
+
+        // دالة حذف الإجازة المرضية من Firebase
+        async function deleteMedicalLeaveFromFirebase(docId, serviceCode, idNumber) {
+            if (confirm('هل أنت متأكد من حذف هذه الإجازة المرضية؟')) {
+                try {
+                    const { doc, deleteDoc } = window.firebaseModules;
+                    await deleteDoc(doc(window.db, 'certificates', docId));
+                    
+                    console.log('تم حذف الإجازة المرضية من Firebase');
+                    
+                    // تحديث القائمة والإحصائيات
+                    loadMedicalLeaves();
+                    updateStatistics();
+                    
+                    alert('تم حذف الإجازة المرضية بنجاح!');
+                    
+                } catch (error) {
+                    console.error('خطأ في حذف الإجازة المرضية:', error);
+                    alert('حدث خطأ في حذف الإجازة المرضية');
+                }
+            }
         }
 
         // إضافة إجازة مرضية جديدة
@@ -1403,45 +1454,86 @@
             }
         });
 
-        // دالة تحميل قائمة الإجازات المرضية
-        function loadMedicalLeaves() {
-            const medicalLeavesIndex = JSON.parse(localStorage.getItem('medical-leaves-index') || '[]');
+        // دالة تحميل قائمة الإجازات المرضية من Firebase
+        async function loadMedicalLeaves() {
             const medicalLeavesList = document.getElementById('medicalLeavesList');
             
-            if (medicalLeavesIndex.length === 0) {
+            try {
+                if (!window.firebaseModules || !window.db) {
+                    medicalLeavesList.innerHTML = `
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                            <p>Firebase غير متاح</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const { collection, query, where, getDocs, orderBy } = window.firebaseModules;
+                
+                // البحث عن الإجازات المرضية في Firebase
+                const q = query(
+                    collection(window.db, 'certificates'),
+                    where('serviceCode', '!=', null), // فلترة الإجازات المرضية
+                    orderBy('created_at', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(q);
+                const medicalLeaves = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // التأكد أن هذا إجازة مرضية وليس شهادة صحية
+                    if (data.serviceCode && data.idNumber && !data.amanah) {
+                        medicalLeaves.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    }
+                });
+
+                if (medicalLeaves.length === 0) {
+                    medicalLeavesList.innerHTML = `
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                            <p>لا توجد إجازات مرضية محفوظة</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>رمز الخدمة</th><th>رقم الهوية</th><th>الاسم</th><th>تاريخ الحفظ</th><th>الإجراءات</th></tr></thead><tbody>';
+                
+                medicalLeaves.forEach(leave => {
+                    const date = new Date(leave.created_at).toLocaleDateString('ar-SA');
+                    
+                    html += `
+                        <tr>
+                            <td>${leave.serviceCode}</td>
+                            <td>${leave.idNumber}</td>
+                            <td>${leave.name || 'غير محدد'}</td>
+                            <td>${date}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteMedicalLeaveFromFirebase('${leave.id}', '${leave.serviceCode}', '${leave.idNumber}')" title="حذف الإجازة المرضية">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table></div>';
+                medicalLeavesList.innerHTML = html;
+                
+            } catch (error) {
+                console.error('خطأ في تحميل الإجازات المرضية:', error);
                 medicalLeavesList.innerHTML = `
-                    <div class="text-center text-muted py-4">
-                        <i class="fas fa-calendar-alt fa-3x mb-3"></i>
-                        <p>لا توجد إجازات مرضية محفوظة</p>
+                    <div class="text-center text-danger py-4">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                        <p>خطأ في تحميل البيانات</p>
                     </div>
                 `;
-                return;
             }
-            
-            let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>رمز الخدمة</th><th>رقم الهوية</th><th>الاسم</th><th>تاريخ الحفظ</th><th>الإجراءات</th></tr></thead><tbody>';
-            
-            medicalLeavesIndex.forEach(item => {
-                const localKey = `medical-leave-${item.serviceCode}-${item.idNumber}`;
-                const medicalLeaveData = JSON.parse(localStorage.getItem(localKey) || '{}');
-                const date = new Date(item.timestamp).toLocaleDateString('ar-SA');
-                
-                html += `
-                    <tr>
-                        <td>${item.serviceCode}</td>
-                        <td>${item.idNumber}</td>
-                        <td>${medicalLeaveData.name || 'غير محدد'}</td>
-                        <td>${date}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="deleteMedicalLeave('${item.serviceCode}', '${item.idNumber}')" title="حذف الإجازة المرضية">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            html += '</tbody></table></div>';
-            medicalLeavesList.innerHTML = html;
         }
 
         // دالة حذف الإجازة المرضية
