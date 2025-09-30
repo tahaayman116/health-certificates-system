@@ -226,18 +226,16 @@
             try {
                 let data = null;
                 
-                // أولاً: البحث في localStorage
+                // مسح localStorage القديم أولاً
                 const localKey = `medical-leave-${serviceCode}-${idNumber}`;
-                const localData = localStorage.getItem(localKey);
+                localStorage.removeItem(localKey);
+                console.log('🗑️ تم مسح البيانات المحلية القديمة');
                 
-                if (localData) {
-                    data = JSON.parse(localData);
-                    console.log('تم العثور على البيانات في localStorage');
-                } else {
-                    console.log('🔍 البحث في Firebase فقط (تجاهل localStorage)...');
-                    
-                    // البحث في Firebase فقط - نفس طريقة admin-dashboard
-                    if (window.db && window.firebaseModules) {
+                // البحث في Firebase فقط (تجاهل localStorage تماماً)
+                console.log('🔍 البحث في Firebase فقط (تجاهل localStorage)...');
+                
+                // البحث في Firebase فقط - نفس طريقة admin-dashboard
+                if (window.db && window.firebaseModules) {
                         try {
                             console.log('🔍 البحث في جميع المستندات للعثور على الإجازة المرضية...');
                             
@@ -278,9 +276,8 @@
                         } catch (firebaseError) {
                             console.error('❌ خطأ في Firebase:', firebaseError);
                         }
-                    } else {
-                        console.log('❌ Firebase غير متاح');
-                    }
+                } else {
+                    console.log('❌ Firebase غير متاح');
                 }
                 
                 if (data) {
