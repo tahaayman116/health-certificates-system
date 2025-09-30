@@ -234,61 +234,52 @@
                     data = JSON.parse(localData);
                     console.log('تم العثور على البيانات في localStorage');
                 } else {
-                    console.log('🔍 البحث في Firebase أولاً...');
+                    console.log('🔍 البحث في Firebase فقط (تجاهل localStorage)...');
                     
-                    // محاولة البحث في Firebase
+                    // البحث في Firebase فقط - نفس طريقة admin-dashboard
                     if (window.db && window.firebaseModules) {
                         try {
-                            const { collection, query, where, getDocs } = window.firebaseModules;
-                            const q = query(
-                                collection(window.db, 'certificates'),
-                                where('serviceCode', '==', serviceCode),
-                                where('idNumber', '==', idNumber)
+                            console.log('🔍 البحث في جميع المستندات للعثور على الإجازة المرضية...');
+                            
+                            // جلب جميع المستندات والبحث عن الإجازة المرضية
+                            const querySnapshot = await window.firebaseModules.getDocs(
+                                window.firebaseModules.collection(window.db, 'certificates')
                             );
                             
-                            const querySnapshot = await getDocs(q);
-                            if (!querySnapshot.empty) {
-                                const doc = querySnapshot.docs[0];
-                                data = doc.data();
-                                console.log('✅ تم العثور على البيانات في Firebase:', data);
+                            let foundDoc = null;
+                            
+                            querySnapshot.forEach((doc) => {
+                                const docData = doc.data();
+                                console.log('📄 فحص المستند:', doc.id, docData);
+                                
+                                // البحث عن الإجازة المرضية بعدة طرق
+                                if (
+                                    (docData.serviceCode === serviceCode && docData.idNumber === idNumber) ||
+                                    (docData.serviceCode === serviceCode && docData.medicalIdNumber === idNumber)
+                                ) {
+                                    // التأكد أنها إجازة مرضية وليس شهادة صحية
+                                    if (docData.serviceCode && !docData.amanah && !docData.municipality) {
+                                        foundDoc = docData;
+                                        console.log('✅ تم العثور على الإجازة المرضية في Firebase:', doc.id);
+                                    }
+                                }
+                            });
+                            
+                            if (foundDoc) {
+                                data = foundDoc;
+                                console.log('✅ البيانات موجودة في Firebase:', data);
                                 
                                 // حفظ في localStorage للسرعة
                                 localStorage.setItem(localKey, JSON.stringify(data));
                             } else {
-                                console.log('❌ لا توجد بيانات في Firebase');
+                                console.log('❌ لا توجد إجازة مرضية في Firebase بهذه البيانات');
                             }
+                            
                         } catch (firebaseError) {
                             console.error('❌ خطأ في Firebase:', firebaseError);
-                            console.log('🔄 البحث في البيانات المحلية...');
-                            
-                            // البحث في localStorage كـ fallback
-                            for (let i = 0; i < localStorage.length; i++) {
-                                const key = localStorage.key(i);
-                                if (key && key.startsWith('medical-leave-')) {
-                                    const storedData = JSON.parse(localStorage.getItem(key) || '{}');
-                                    if (storedData.serviceCode === serviceCode && storedData.idNumber === idNumber) {
-                                        data = storedData;
-                                        console.log('✅ تم العثور على البيانات محلياً');
-                                        break;
-                                    }
-                                }
-                            }
                         }
                     } else {
-                        console.log('🔄 Firebase غير متاح، البحث محلياً...');
-                        
-                        // البحث في localStorage
-                        for (let i = 0; i < localStorage.length; i++) {
-                            const key = localStorage.key(i);
-                            if (key && key.startsWith('medical-leave-')) {
-                                const storedData = JSON.parse(localStorage.getItem(key) || '{}');
-                                if (storedData.serviceCode === serviceCode && storedData.idNumber === idNumber) {
-                                    data = storedData;
-                                    console.log('✅ تم العثور على البيانات محلياً');
-                                    break;
-                                }
-                            }
-                        }
+                        console.log('❌ Firebase غير متاح');
                     }
                 }
                 
