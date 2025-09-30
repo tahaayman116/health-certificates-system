@@ -241,7 +241,7 @@
                         try {
                             const { collection, query, where, getDocs } = window.firebaseModules;
                             const q = query(
-                                collection(window.db, 'medical-leaves'),
+                                collection(window.db, 'certificates'),
                                 where('serviceCode', '==', serviceCode),
                                 where('idNumber', '==', idNumber)
                             );

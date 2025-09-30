@@ -1376,7 +1376,7 @@
                 // الحفظ في Firebase أولاً (مثل الشهادات تماماً)
                 try {
                     const { collection, addDoc } = window.firebaseModules;
-                    const docRef = await addDoc(collection(window.db, 'medical-leaves'), medicalLeaveData);
+                    const docRef = await addDoc(collection(window.db, 'certificates'), medicalLeaveData);
                     console.log('✅ تم حفظ الإجازة المرضية في Firebase بنجاح:', docRef.id);
                     
                     // حفظ محلي للسرعة فقط
