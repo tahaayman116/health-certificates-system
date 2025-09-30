@@ -1325,15 +1325,10 @@
                     return;
                 }
 
-                const { collection, query, where, getDocs } = window.firebaseModules;
+                const { collection, getDocs } = window.firebaseModules;
                 
-                // البحث عن الإجازات المرضية في Firebase
-                const q = query(
-                    collection(window.db, 'certificates'),
-                    where('serviceCode', '!=', null)
-                );
-                
-                const querySnapshot = await getDocs(q);
+                // جلب جميع البيانات من Firebase
+                const querySnapshot = await getDocs(collection(window.db, 'certificates'));
                 let totalMedicalLeaves = 0;
                 let todayMedicalLeaves = 0;
                 const today = new Date().toDateString();
@@ -1469,12 +1464,11 @@
                     return;
                 }
 
-                const { collection, query, where, getDocs, orderBy } = window.firebaseModules;
+                const { collection, getDocs, orderBy, query } = window.firebaseModules;
                 
-                // البحث عن الإجازات المرضية في Firebase
+                // جلب جميع البيانات من Firebase (بدون فلترة معقدة)
                 const q = query(
                     collection(window.db, 'certificates'),
-                    where('serviceCode', '!=', null), // فلترة الإجازات المرضية
                     orderBy('created_at', 'desc')
                 );
                 
