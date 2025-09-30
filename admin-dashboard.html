@@ -811,6 +811,11 @@
         window.firebaseModules = {
             collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where
         };
+        
+        // تأكيد الاتصال بـ Firebase
+        console.log('Firebase initialized successfully!');
+        console.log('Project ID:', firebaseConfig.projectId);
+        console.log('Database:', db);
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -1386,16 +1391,25 @@
                 
                 console.log('تم حفظ الإجازة المرضية بنجاح:', medicalLeaveData);
                 
-                // محاولة الحفظ في Firebase (إضافي)
+                // حفظ في Firebase (أساسي)
+                let firebaseSaved = false;
                 if (window.db && window.firebaseModules) {
                     try {
                         const { collection, addDoc } = window.firebaseModules;
-                        await addDoc(collection(window.db, 'medical-leaves'), medicalLeaveData);
-                        console.log('تم حفظ الإجازة المرضية في Firebase أيضاً');
+                        console.log('محاولة حفظ في Firebase...');
+                        const docRef = await addDoc(collection(window.db, 'medical-leaves'), medicalLeaveData);
+                        console.log('✅ تم حفظ الإجازة المرضية في Firebase بنجاح! Doc ID:', docRef.id);
+                        firebaseSaved = true;
                     } catch (error) {
-                        console.log('لم يتم الحفظ في Firebase:', error);
+                        console.error('❌ فشل الحفظ في Firebase:', error);
+                        alert('تحذير: لم يتم حفظ البيانات في Firebase. تحقق من الاتصال والصلاحيات.');
                     }
+                } else {
+                    console.error('❌ Firebase غير متاح!');
+                    alert('تحذير: Firebase غير متصل!');
                 }
+                
+                console.log('Firebase saved:', firebaseSaved);
                 
                 // تحديث القوائم والإحصائيات
                 loadMedicalLeaves();
