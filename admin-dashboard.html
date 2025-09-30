@@ -1386,16 +1386,8 @@
                 
                 console.log('تم حفظ الإجازة المرضية بنجاح:', medicalLeaveData);
                 
-                // محاولة الحفظ في Firebase (إضافي)
-                if (window.db && window.firebaseModules) {
-                    try {
-                        const { collection, addDoc } = window.firebaseModules;
-                        await addDoc(collection(window.db, 'medical-leaves'), medicalLeaveData);
-                        console.log('تم حفظ الإجازة المرضية في Firebase أيضاً');
-                    } catch (error) {
-                        console.log('لم يتم الحفظ في Firebase:', error);
-                    }
-                }
+                // محاولة الحفظ في Firebase (إضافي) - معطل مؤقتاً
+                console.log('تم تعطيل Firebase مؤقتاً - النظام يعمل بـ localStorage فقط');
                 
                 // تحديث القوائم والإحصائيات
                 loadMedicalLeaves();

@@ -234,56 +234,17 @@
                     data = JSON.parse(localData);
                     console.log('تم العثور على البيانات في localStorage');
                 } else {
-                    console.log('لم يتم العثور على البيانات في localStorage، البحث في Firebase...');
+                    console.log('لم يتم العثور على البيانات في localStorage، البحث في جميع البيانات المحلية...');
                     
-                    // ثانياً: البحث في Firebase
-                    if (window.db && window.firebaseModules) {
-                        try {
-                            const { collection, query, where, getDocs } = window.firebaseModules;
-                            const q = query(
-                                collection(window.db, 'medical-leaves'),
-                                where('serviceCode', '==', serviceCode),
-                                where('idNumber', '==', idNumber)
-                            );
-                            
-                            const querySnapshot = await getDocs(q);
-                            if (!querySnapshot.empty) {
-                                const doc = querySnapshot.docs[0];
-                                data = doc.data();
-                                console.log('تم العثور على البيانات في Firebase');
-                                
-                                // حفظ في localStorage للمرات القادمة
-                                localStorage.setItem(localKey, JSON.stringify(data));
-                            }
-                        } catch (firebaseError) {
-                            console.log('خطأ في Firebase:', firebaseError);
-                            
-                            // البحث في جميع البيانات المحفوظة محلياً كـ fallback
-                            console.log('البحث في جميع البيانات المحلية...');
-                            for (let i = 0; i < localStorage.length; i++) {
-                                const key = localStorage.key(i);
-                                if (key && key.startsWith('medical-leave-')) {
-                                    const storedData = JSON.parse(localStorage.getItem(key) || '{}');
-                                    if (storedData.serviceCode === serviceCode && storedData.idNumber === idNumber) {
-                                        data = storedData;
-                                        console.log('تم العثور على البيانات في البحث المحلي الشامل');
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        // إذا لم يكن Firebase متاحاً، ابحث في جميع البيانات المحلية
-                        console.log('Firebase غير متاح، البحث في جميع البيانات المحلية...');
-                        for (let i = 0; i < localStorage.length; i++) {
-                            const key = localStorage.key(i);
-                            if (key && key.startsWith('medical-leave-')) {
-                                const storedData = JSON.parse(localStorage.getItem(key) || '{}');
-                                if (storedData.serviceCode === serviceCode && storedData.idNumber === idNumber) {
-                                    data = storedData;
-                                    console.log('تم العثور على البيانات في البحث المحلي');
-                                    break;
-                                }
+                    // البحث في جميع البيانات المحفوظة محلياً
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && key.startsWith('medical-leave-')) {
+                            const storedData = JSON.parse(localStorage.getItem(key) || '{}');
+                            if (storedData.serviceCode === serviceCode && storedData.idNumber === idNumber) {
+                                data = storedData;
+                                console.log('تم العثور على البيانات في البحث المحلي الشامل');
+                                break;
                             }
                         }
                     }
