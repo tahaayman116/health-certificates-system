@@ -1386,15 +1386,29 @@
                 
                 console.log('تم حفظ الإجازة المرضية بنجاح:', medicalLeaveData);
                 
-                alert('تم حفظ الإجازة المرضية بنجاح!');
+                // محاولة الحفظ في Firebase (إضافي)
+                if (window.db && window.firebaseModules) {
+                    try {
+                        const { collection, addDoc } = window.firebaseModules;
+                        await addDoc(collection(window.db, 'medical-leaves'), medicalLeaveData);
+                        console.log('تم حفظ الإجازة المرضية في Firebase أيضاً');
+                    } catch (error) {
+                        console.log('لم يتم الحفظ في Firebase:', error);
+                    }
+                }
+                
+                // تحديث القوائم والإحصائيات
+                loadMedicalLeaves();
+                updateStatistics();
+                
+                // إعادة تعيين النموذج
                 document.getElementById('medicalLeaveForm').reset();
                 
-                // تحديث قائمة الإجازات المرضية
-                loadMedicalLeaves();
+                alert('تم حفظ الإجازة المرضية بنجاح!');
                 
             } catch (error) {
                 console.error('خطأ في حفظ الإجازة المرضية:', error);
-                alert('حدث خطأ في حفظ الإجازة المرضية. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.');
+                alert('حدث خطأ في حفظ الإجازة المرضية');
             }
         });
 
