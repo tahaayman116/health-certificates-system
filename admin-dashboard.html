@@ -1357,46 +1357,80 @@
             }
         }
 
-        // دالة حذف الإجازة المرضية من Firebase
+        // دالة حذف الإجازة المرضية (نفس طريقة حذف الشهادات)
         async function deleteMedicalLeaveFromFirebase(docId, serviceCode, idNumber) {
+            console.log('محاولة حذف الإجازة المرضية:', { docId, serviceCode, idNumber });
             if (confirm('هل أنت متأكد من حذف هذه الإجازة المرضية؟')) {
                 try {
-                    console.log('🔍 محاولة حذف الإجازة المرضية:', { docId, serviceCode, idNumber });
-                    console.log('🔍 Firebase modules:', window.firebaseModules);
-                    console.log('🔍 Firebase db:', window.db);
+                    let deleted = false;
                     
-                    // التأكد من وجود Firebase
-                    if (!window.firebaseModules || !window.db) {
-                        throw new Error('Firebase غير متاح');
+                    // إذا كان لدينا معرف Firebase، احذف مباشرة
+                    if (docId && !docId.startsWith('local_')) {
+                        try {
+                            const docRef = window.firebaseModules.doc(window.db, 'certificates', docId);
+                            await window.firebaseModules.deleteDoc(docRef);
+                            deleted = true;
+                            console.log('تم حذف الإجازة المرضية من Firebase باستخدام المعرف المباشر');
+                        } catch (error) {
+                            console.log('فشل الحذف بالمعرف المباشر، سأحاول البحث بـ serviceCode و idNumber');
+                        }
                     }
                     
-                    // التأكد من وجود الدوال المطلوبة
-                    if (!window.firebaseModules.doc || !window.firebaseModules.deleteDoc) {
-                        throw new Error('دوال Firebase غير متاحة');
+                    // إذا لم ينجح الحذف المباشر، ابحث بـ serviceCode و idNumber
+                    if (!deleted) {
+                        const q = window.firebaseModules.query(
+                            window.firebaseModules.collection(window.db, 'certificates'),
+                            window.firebaseModules.where('serviceCode', '==', serviceCode),
+                            window.firebaseModules.where('idNumber', '==', idNumber)
+                        );
+                        
+                        const querySnapshot = await window.firebaseModules.getDocs(q);
+                        
+                        if (!querySnapshot.empty) {
+                            const docRef = querySnapshot.docs[0].ref;
+                            await window.firebaseModules.deleteDoc(docRef);
+                            deleted = true;
+                            console.log('تم حذف الإجازة المرضية من Firebase باستخدام البحث');
+                        }
                     }
                     
-                    // محاولة الحذف
-                    console.log('🔥 بدء عملية الحذف من Firebase...');
-                    const docRef = window.firebaseModules.doc(window.db, 'certificates', docId);
-                    console.log('📄 Document reference:', docRef);
+                    // حذف من البيانات المحلية في جميع الحالات
+                    const localKey = `medical-leave-${serviceCode}-${idNumber}`;
+                    localStorage.removeItem(localKey);
                     
-                    await window.firebaseModules.deleteDoc(docRef);
-                    console.log('✅ تم حذف الإجازة المرضية من Firebase بنجاح!');
+                    // تحديث فهرس الإجازات المرضية المحلي
+                    const medicalLeavesIndex = JSON.parse(localStorage.getItem('medical-leaves-index') || '[]');
+                    const updatedIndex = medicalLeavesIndex.filter(item => 
+                        !(item.serviceCode === serviceCode && item.idNumber === idNumber)
+                    );
+                    localStorage.setItem('medical-leaves-index', JSON.stringify(updatedIndex));
                     
-                    // التحقق من الحذف
-                    setTimeout(async () => {
-                        console.log('🔄 التحقق من الحذف...');
-                        await loadMedicalLeaves();
-                        await updateStatistics();
-                    }, 1000);
+                    loadMedicalLeaves();
+                    updateStatistics();
                     
-                    alert('تم حذف الإجازة المرضية بنجاح!');
+                    if (deleted) {
+                        alert('تم حذف الإجازة المرضية بنجاح!');
+                    } else {
+                        alert('تم حذف الإجازة المرضية من البيانات المحلية!');
+                    }
                     
                 } catch (error) {
-                    console.error('❌ خطأ في حذف الإجازة المرضية:', error);
-                    console.error('❌ تفاصيل الخطأ:', error.message);
-                    console.error('❌ Stack trace:', error.stack);
-                    alert('فشل في حذف الإجازة المرضية: ' + error.message);
+                    console.error('خطأ في حذف الإجازة المرضية:', error);
+                    
+                    // في حالة فشل Firebase، احذف من البيانات المحلية على الأقل
+                    const localKey = `medical-leave-${serviceCode}-${idNumber}`;
+                    localStorage.removeItem(localKey);
+                    
+                    const medicalLeavesIndex = JSON.parse(localStorage.getItem('medical-leaves-index') || '[]');
+                    const updatedIndex = medicalLeavesIndex.filter(item => 
+                        !(item.serviceCode === serviceCode && item.idNumber === idNumber)
+                    );
+                    localStorage.setItem('medical-leaves-index', JSON.stringify(updatedIndex));
+                    
+                    loadMedicalLeaves();
+                    updateStatistics();
+                    
+                    alert('تم حذف الإجازة المرضية من البيانات المحلية (Firebase غير متاح)');
                 }
             }
         }
