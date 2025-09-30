@@ -284,21 +284,11 @@
                     let resultHtml = `
     <div class="results-inquiery row">
         <div class="col-md-6"><span> الاسم:</span> ${data.name || ''}</div>
-`;
-
-if (data.coname) {
-    resultHtml += `<div class="col-md-6"><span> اسم المرافق:</span> ${data.coname}</div>`;
-}
-if (data.rltv) {
-    resultHtml += `<div class="col-md-6"><span> صلة القرابة:</span> ${data.rltv}</div>`;
-}                
-
-resultHtml += `
         <div class="col-md-6"><span>تاريخ إصدار تقرير الإجازة:</span> ${data.report_issue_date || ''}</div>
         <div class="col-md-6"><span>تبدأ من:</span> ${data.leave_start || ''}</div>
         <div class="col-md-6"><span>وحتى:</span> ${data.leave_end || ''}</div>
         <div class="col-md-6"><span>المدة بالأيام:</span> ${data.time || ''}</div>
-        <div class="col-md-6"><span>إسم الطبيب:</span> ${data.doctor_name || ''}</div>
+        <div class="col-md-6"><span>اسم الممارس:</span> ${data.doctor_name || ''}</div>
         <div class="col-md-6"><span>المسمى الوظيفي:</span> ${data.role || ''}</div>
     </div>
 `;

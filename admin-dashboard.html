@@ -652,17 +652,9 @@
                                     <label class="form-label">الاسم</label>
                                     <input type="text" class="form-control" id="patientName">
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">اسم المرافق</label>
-                                    <input type="text" class="form-control" id="companionName">
-                                </div>
                             </div>
                             
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">صلة القرابة</label>
-                                    <input type="text" class="form-control" id="relationship">
-                                </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">تاريخ إصدار تقرير الإجازة</label>
                                     <input type="text" class="form-control" id="reportIssueDate" placeholder="مثال: 2025-01-15">
@@ -686,7 +678,7 @@
                                     <input type="number" class="form-control" id="leaveDuration" min="1">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">اسم الطبيب</label>
+                                    <label class="form-label">اسم الممارس</label>
                                     <input type="text" class="form-control" id="doctorName">
                                 </div>
                             </div>
@@ -1435,8 +1427,6 @@
             const serviceCode = document.getElementById('serviceCode').value.trim();
             const idNumber = document.getElementById('medicalIdNumber').value.trim();
             const name = document.getElementById('patientName').value.trim();
-            const companionName = document.getElementById('companionName').value.trim();
-            const relationship = document.getElementById('relationship').value.trim();
             const reportIssueDate = document.getElementById('reportIssueDate').value;
             const leaveStart = document.getElementById('leaveStart').value;
             const leaveEnd = document.getElementById('leaveEnd').value;
@@ -1451,8 +1441,6 @@
             
             const medicalLeaveData = {
                 name: name,
-                coname: companionName || null,
-                rltv: relationship || null,
                 report_issue_date: reportIssueDate,
                 leave_start: leaveStart,
                 leave_end: leaveEnd,
