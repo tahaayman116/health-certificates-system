@@ -446,6 +446,10 @@
                 نظام الشهادات الصحية
             </a>
             <div class="navbar-nav ms-auto">
+                <a href="/medical-leaves.html" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    الإجازات المرضية
+                </a>
                 <button type="button" class="btn btn-danger" onclick="logout()">
                     <i class="fas fa-sign-out-alt me-2"></i>
                     تسجيل الخروج
@@ -467,6 +471,22 @@
                 <div class="stats-card" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
                     <div class="stats-number" id="todayCertificates">0</div>
                     <div>شهادات اليوم</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Leaves Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="stats-card" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
+                    <div class="stats-number" id="totalMedicalLeaves">0</div>
+                    <div>إجمالي الإجازات المرضية</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stats-card" style="background: linear-gradient(135deg, #dc3545 0%, #a71e2a 100%);">
+                    <div class="stats-number" id="todayMedicalLeaves">0</div>
+                    <div>إجازات مرضية اليوم</div>
                 </div>
             </div>
         </div>
@@ -534,7 +554,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">تاريخ الإصدار (ميلادي)</label>
-                                    <input type="text" class="form-control" id="issueDate" placeholder="مثال: 2024/03/15">
+                                    <input type="text" class="form-control" id="issueDate" placeholder="مثال: 2024/03/15" onchange="calculateExpiryDate()">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">تاريخ الانتهاء (ميلادي)</label>
@@ -548,6 +568,7 @@
                                     <select class="form-select" id="certificateType" title="اختر نوع الشهادة">
                                         <option value="الشهادة الصحية الموحدة">الشهادة الصحية الموحدة</option>
                                         <option value="شهادة صحية">شهادة صحية</option>
+                                        <option value="الشهادة الصحية السنوية">الشهادة الصحية السنوية</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -598,6 +619,116 @@
                                 حفظ الشهادة
                             </button>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Medical Leave Form -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            إضافة إجازة مرضية جديدة
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="medicalLeaveForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">رمز الخدمة <span class="required">*</span></label>
+                                    <input type="text" class="form-control" id="serviceCode" maxlength="14" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">رقم الهوية / الإقامة <span class="required">*</span></label>
+                                    <input type="text" class="form-control" id="medicalIdNumber" maxlength="10" pattern="\d*" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">الاسم</label>
+                                    <input type="text" class="form-control" id="patientName">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">اسم المرافق</label>
+                                    <input type="text" class="form-control" id="companionName">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">صلة القرابة</label>
+                                    <input type="text" class="form-control" id="relationship">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">تاريخ إصدار تقرير الإجازة</label>
+                                    <input type="text" class="form-control" id="reportIssueDate" placeholder="مثال: 2025-01-15">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">تبدأ من</label>
+                                    <input type="text" class="form-control" id="leaveStart" placeholder="مثال: 2025-01-15">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">وحتى</label>
+                                    <input type="text" class="form-control" id="leaveEnd" placeholder="مثال: 2025-01-20">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">المدة بالأيام</label>
+                                    <input type="number" class="form-control" id="leaveDuration" min="1">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">اسم الطبيب</label>
+                                    <input type="text" class="form-control" id="doctorName">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">المسمى الوظيفي</label>
+                                <input type="text" class="form-control" id="jobTitle">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-save me-2"></i>
+                                حفظ الإجازة المرضية
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Leaves List -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>
+                                قائمة الإجازات المرضية المحفوظة
+                            </h5>
+                            <button class="btn btn-outline-primary btn-sm" onclick="loadMedicalLeaves()">
+                                <i class="fas fa-refresh me-1"></i>
+                                تحديث
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="medicalLeavesList">
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                                <p>لا توجد إجازات مرضية محفوظة</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -890,9 +1021,33 @@
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
 
+        // تحميل الشهادات المحلية
+        function loadLocalCertificates() {
+            try {
+                const localData = localStorage.getItem('certificates');
+                if (localData) {
+                    certificates = JSON.parse(localData);
+                } else {
+                    certificates = [];
+                }
+                displayCertificates();
+            } catch (error) {
+                console.error('خطأ في تحميل الشهادات المحلية:', error);
+                certificates = [];
+                displayCertificates();
+            }
+        }
+
         // تحميل الشهادات
         async function loadCertificates() {
             try {
+                // التحقق من توفر Firebase
+                if (!window.firebaseModules || !window.db) {
+                    console.log('Firebase غير متاح، سيتم تحميل البيانات المحلية فقط');
+                    loadLocalCertificates();
+                    return;
+                }
+                
                 const querySnapshot = await window.firebaseModules.getDocs(
                     window.firebaseModules.query(
                         window.firebaseModules.collection(window.db, 'certificates'),
@@ -1156,17 +1311,225 @@
             
             document.getElementById('totalCertificates').textContent = total;
             document.getElementById('todayCertificates').textContent = todayCount;
+            
+            // إحصائيات الإجازات المرضية
+            updateMedicalLeavesStatistics();
         }
 
-        // تحميل البيانات عند بدء الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            // محاولة تحميل البيانات من Firebase أو البيانات المحلية
-            setTimeout(() => {
-                loadCertificates();
-                // تنظيف localStorage من الشهادات المحذوفة
-                cleanupLocalStorage();
-            }, 1000);
+        // تحديث إحصائيات الإجازات المرضية
+        function updateMedicalLeavesStatistics() {
+            const medicalLeavesIndex = JSON.parse(localStorage.getItem('medical-leaves-index') || '[]');
+            
+            // إجمالي الإجازات المرضية
+            document.getElementById('totalMedicalLeaves').textContent = medicalLeavesIndex.length;
+            
+            // إجازات اليوم
+            const today = new Date().toDateString();
+            const todayMedicalLeaves = medicalLeavesIndex.filter(leave => {
+                const leaveDate = new Date(leave.timestamp);
+                return leaveDate.toDateString() === today;
+            }).length;
+            
+            document.getElementById('todayMedicalLeaves').textContent = todayMedicalLeaves;
+        }
+
+        // إضافة إجازة مرضية جديدة
+        document.getElementById('medicalLeaveForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const serviceCode = document.getElementById('serviceCode').value.trim();
+            const idNumber = document.getElementById('medicalIdNumber').value.trim();
+            const name = document.getElementById('patientName').value.trim();
+            const companionName = document.getElementById('companionName').value.trim();
+            const relationship = document.getElementById('relationship').value.trim();
+            const reportIssueDate = document.getElementById('reportIssueDate').value;
+            const leaveStart = document.getElementById('leaveStart').value;
+            const leaveEnd = document.getElementById('leaveEnd').value;
+            const leaveDuration = document.getElementById('leaveDuration').value;
+            const doctorName = document.getElementById('doctorName').value.trim();
+            const jobTitle = document.getElementById('jobTitle').value.trim();
+            
+            if (!serviceCode || !idNumber || !name || !reportIssueDate || !leaveStart || !leaveEnd || !leaveDuration || !doctorName || !jobTitle) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+            
+            const medicalLeaveData = {
+                name: name,
+                coname: companionName || null,
+                rltv: relationship || null,
+                report_issue_date: reportIssueDate,
+                leave_start: leaveStart,
+                leave_end: leaveEnd,
+                time: leaveDuration,
+                doctor_name: doctorName,
+                role: jobTitle,
+                created_at: new Date().toISOString()
+            };
+            
+            try {
+                // إضافة معرف فريد للإجازة المرضية
+                medicalLeaveData.id = `${serviceCode}_${idNumber}`;
+                medicalLeaveData.serviceCode = serviceCode;
+                medicalLeaveData.idNumber = idNumber;
+                
+                // حفظ مباشر في النظام المحلي (يعمل 100%)
+                const localKey = `medical-leave-${serviceCode}-${idNumber}`;
+                localStorage.setItem(localKey, JSON.stringify(medicalLeaveData));
+                
+                // حفظ فهرس الإجازات المرضية
+                const existingLeaves = JSON.parse(localStorage.getItem('medical-leaves-index') || '[]');
+                if (!existingLeaves.find(item => item.serviceCode === serviceCode && item.idNumber === idNumber)) {
+                    existingLeaves.push({ serviceCode, idNumber, timestamp: new Date().toISOString() });
+                    localStorage.setItem('medical-leaves-index', JSON.stringify(existingLeaves));
+                }
+                
+                console.log('تم حفظ الإجازة المرضية بنجاح:', medicalLeaveData);
+                
+                alert('تم حفظ الإجازة المرضية بنجاح!');
+                document.getElementById('medicalLeaveForm').reset();
+                
+                // تحديث قائمة الإجازات المرضية
+                loadMedicalLeaves();
+                
+            } catch (error) {
+                console.error('خطأ في حفظ الإجازة المرضية:', error);
+                alert('حدث خطأ في حفظ الإجازة المرضية. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.');
+            }
         });
+
+        // دالة تحميل قائمة الإجازات المرضية
+        function loadMedicalLeaves() {
+            const medicalLeavesIndex = JSON.parse(localStorage.getItem('medical-leaves-index') || '[]');
+            const medicalLeavesList = document.getElementById('medicalLeavesList');
+            
+            if (medicalLeavesIndex.length === 0) {
+                medicalLeavesList.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                        <p>لا توجد إجازات مرضية محفوظة</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>رمز الخدمة</th><th>رقم الهوية</th><th>الاسم</th><th>تاريخ الحفظ</th><th>الإجراءات</th></tr></thead><tbody>';
+            
+            medicalLeavesIndex.forEach(item => {
+                const localKey = `medical-leave-${item.serviceCode}-${item.idNumber}`;
+                const medicalLeaveData = JSON.parse(localStorage.getItem(localKey) || '{}');
+                const date = new Date(item.timestamp).toLocaleDateString('ar-SA');
+                
+                html += `
+                    <tr>
+                        <td>${item.serviceCode}</td>
+                        <td>${item.idNumber}</td>
+                        <td>${medicalLeaveData.name || 'غير محدد'}</td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteMedicalLeave('${item.serviceCode}', '${item.idNumber}')" title="حذف الإجازة المرضية">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table></div>';
+            medicalLeavesList.innerHTML = html;
+        }
+
+        // دالة حذف الإجازة المرضية
+        function deleteMedicalLeave(serviceCode, idNumber) {
+            if (confirm('هل أنت متأكد من حذف هذه الإجازة المرضية؟')) {
+                // حذف البيانات
+                const localKey = `medical-leave-${serviceCode}-${idNumber}`;
+                localStorage.removeItem(localKey);
+                
+                // تحديث الفهرس
+                const medicalLeavesIndex = JSON.parse(localStorage.getItem('medical-leaves-index') || '[]');
+                const updatedIndex = medicalLeavesIndex.filter(item => 
+                    !(item.serviceCode === serviceCode && item.idNumber === idNumber)
+                );
+                localStorage.setItem('medical-leaves-index', JSON.stringify(updatedIndex));
+                
+                // تحديث القائمة
+                loadMedicalLeaves();
+                
+                alert('تم حذف الإجازة المرضية بنجاح!');
+            }
+        }
+
+        // تحديث المدة تلقائياً عند تغيير التواريخ
+        document.getElementById('leaveStart').addEventListener('change', calculateLeaveDuration);
+        document.getElementById('leaveEnd').addEventListener('change', calculateLeaveDuration);
+
+        function calculateLeaveDuration() {
+            const startDate = document.getElementById('leaveStart').value;
+            const endDate = document.getElementById('leaveEnd').value;
+            
+            if (startDate && endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                
+                // التأكد من أن التواريخ صحيحة
+                if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                    document.getElementById('leaveDuration').value = '';
+                    return;
+                }
+                
+                const timeDiff = end.getTime() - start.getTime();
+                const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1; // +1 لتضمين اليوم الأول
+                
+                if (daysDiff >= 1) {
+                    document.getElementById('leaveDuration').value = daysDiff;
+                } else {
+                    document.getElementById('leaveDuration').value = '';
+                }
+            }
+        }
+
+        // دالة حساب تاريخ الانتهاء تلقائياً (+1 سنة)
+        function calculateExpiryDate() {
+            const issueDateInput = document.getElementById('issueDate');
+            const expiryDateInput = document.getElementById('expiryDate');
+            
+            if (issueDateInput.value) {
+                try {
+                    // تحويل التاريخ من صيغة YYYY/MM/DD أو YYYY-MM-DD
+                    let dateStr = issueDateInput.value.replace(/\//g, '-');
+                    let issueDate = new Date(dateStr);
+                    
+                    // إضافة سنة واحدة
+                    let expiryDate = new Date(issueDate);
+                    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+                    
+                    // تنسيق التاريخ بصيغة YYYY/MM/DD
+                    let year = expiryDate.getFullYear();
+                    let month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+                    let day = String(expiryDate.getDate()).padStart(2, '0');
+                    
+                    expiryDateInput.value = `${year}/${month}/${day}`;
+                } catch (error) {
+                    console.log('خطأ في حساب تاريخ الانتهاء:', error);
+                }
+            }
+        }
+
+        // تحميل الشهادات والإجازات المرضية عند تحميل الصفحة
+        function initializeData() {
+            // انتظار تحميل Firebase
+            if (window.firebaseModules && window.db) {
+                loadCertificates();
+                loadMedicalLeaves();
+            } else {
+                // إعادة المحاولة بعد ثانية واحدة
+                setTimeout(initializeData, 1000);
+            }
+        }
+        
+        // بدء التحميل
+        initializeData();
 
         // تنظيف localStorage من الشهادات المحذوفة
         async function cleanupLocalStorage() {
