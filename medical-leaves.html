@@ -257,6 +257,34 @@
                             }
                         } catch (firebaseError) {
                             console.log('خطأ في Firebase:', firebaseError);
+                            
+                            // البحث في جميع البيانات المحفوظة محلياً كـ fallback
+                            console.log('البحث في جميع البيانات المحلية...');
+                            for (let i = 0; i < localStorage.length; i++) {
+                                const key = localStorage.key(i);
+                                if (key && key.startsWith('medical-leave-')) {
+                                    const storedData = JSON.parse(localStorage.getItem(key) || '{}');
+                                    if (storedData.serviceCode === serviceCode && storedData.idNumber === idNumber) {
+                                        data = storedData;
+                                        console.log('تم العثور على البيانات في البحث المحلي الشامل');
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // إذا لم يكن Firebase متاحاً، ابحث في جميع البيانات المحلية
+                        console.log('Firebase غير متاح، البحث في جميع البيانات المحلية...');
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            if (key && key.startsWith('medical-leave-')) {
+                                const storedData = JSON.parse(localStorage.getItem(key) || '{}');
+                                if (storedData.serviceCode === serviceCode && storedData.idNumber === idNumber) {
+                                    data = storedData;
+                                    console.log('تم العثور على البيانات في البحث المحلي');
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
