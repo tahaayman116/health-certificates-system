@@ -132,7 +132,7 @@
         
         <div id="certificateContent" class="certificate-container" style="display: none;">
             <div class="certificate-header">
-                <h1><i class="fas fa-certificate me-2"></i>الشهادة الصحية</h1>
+                <h1 style="visibility: hidden;"><i class="fas fa-certificate me-2"></i>جاري التحميل...</h1>
                 <p class="mb-0">وزارة البلديات والإسكان - المملكة العربية السعودية</p>
             </div>
             
@@ -428,12 +428,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             // إخفاء المحتوى الافتراضي فوراً لمنع الوميض
             document.getElementById('certificateContent').style.display = 'none';
-            
-            // إخفاء العنوان الافتراضي فوراً
-            const headerTitle = document.querySelector('.certificate-header h1');
-            if (headerTitle) {
-                headerTitle.style.visibility = 'hidden';
-            }
             
             // تحميل البيانات فوراً بدون تأخير
             loadCertificate();
