@@ -1091,7 +1091,7 @@
                                     <div class="row">
                                         <div class="col-md-12 center">
                                             <div class="sub-heading">
-                                                <h2 style="text-align:center" id="certificateTitle">الشهادة الصحية الموحدة</h2>
+                                                <h2 style="text-align:center; display:none;" id="certificateTitle">الشهادة الصحية الموحدة</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -1567,6 +1567,8 @@
                     console.log('لا يوجد معرف شهادة في الرابط');
                     return;
                 }
+                
+                // العنوان سيظهر فقط عند تحميل البيانات الصحيحة
 
                 try {
                     // محاولة تحميل البيانات من Firebase
@@ -1579,8 +1581,13 @@
                     
                     if (!querySnapshot.empty) {
                         const certificateData = querySnapshot.docs[0].data();
-                        fillCertificateFields(certificateData);
-                        showCertificate();
+                        // التأكد أن الشهادة غير محذوفة
+                        if (!certificateData.deleted) {
+                            fillCertificateFields(certificateData);
+                            showCertificate();
+                        } else {
+                            showCertificateNotFound();
+                        }
                     } else {
                         // إذا لم توجد البيانات في Firebase، جرب البيانات المحلية
                         loadLocalCertificateData(certificateId);
@@ -1611,9 +1618,16 @@
                             const querySnapshot = await window.firebaseModules.getDocs(q);
                             
                             if (!querySnapshot.empty) {
-                                // الشهادة موجودة في Firebase، اعرضها
-                                fillCertificateFields(certificate);
-                                showCertificate();
+                                const firebaseCertificate = querySnapshot.docs[0].data();
+                                // التأكد أن الشهادة غير محذوفة في Firebase
+                                if (!firebaseCertificate.deleted) {
+                                    // الشهادة موجودة في Firebase، اعرضها
+                                    fillCertificateFields(certificate);
+                                    showCertificate();
+                                } else {
+                                    // الشهادة محذوفة من Firebase
+                                    showCertificateNotFound();
+                                }
                             } else {
                                 // الشهادة محذوفة من Firebase، احذفها من localStorage أيضاً
                                 const updatedCertificates = certificates.filter(cert => cert.uniqueId !== certificateId);
@@ -1648,6 +1662,18 @@
 
             // ملء حقول الشهادة بالبيانات
             function fillCertificateFields(data) {
+                // تحديث العنوان حسب نوع الشهادة فوراً وإظهاره
+                const titleElement = document.getElementById('certificateTitle');
+                if (titleElement) {
+                    if (data.programType && data.programType.includes('الموحدة')) {
+                        titleElement.textContent = 'الشهادة الصحية الموحدة';
+                    } else {
+                        titleElement.textContent = 'الشهادة الصحية';
+                    }
+                    // إظهار العنوان بعد تحديثه
+                    titleElement.style.display = 'block';
+                }
+                
                 // البحث عن الحقول وملؤها
                 const fields = document.querySelectorAll('input[readonly]');
                 
@@ -1736,11 +1762,16 @@
                 }
             }
 
-            // تحميل البيانات عند بدء الصفحة
+            // تحميل البيانات عند بدء الصفحة فوراً
             document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(() => {
-                    loadCertificateData();
-                }, 2000); // انتظار تحميل Firebase
+                // إخفاء العنوان فوراً حتى تحميل البيانات الصحيحة
+                const titleElement = document.getElementById('certificateTitle');
+                if (titleElement) {
+                    titleElement.style.display = 'none';
+                }
+                
+                // تحميل البيانات فوراً بدون تأخير
+                loadCertificateData();
             });
         </script>
         

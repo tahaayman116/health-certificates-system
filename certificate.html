@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -312,7 +312,12 @@
                 
                 if (!querySnapshot.empty) {
                     const certificateData = querySnapshot.docs[0].data();
-                    displayCertificate(certificateData);
+                    // التأكد أن الشهادة غير محذوفة
+                    if (!certificateData.deleted) {
+                        displayCertificate(certificateData);
+                    } else {
+                        showError();
+                    }
                 } else {
                     // إذا لم توجد البيانات في Firebase، جرب البيانات المحلية
                     loadLocalCertificate(certificateId);
@@ -330,7 +335,7 @@
             const localData = localStorage.getItem('certificates');
             if (localData) {
                 const certificates = JSON.parse(localData);
-                const certificate = certificates.find(cert => cert.uniqueId === certificateId);
+                const certificate = certificates.find(cert => cert.uniqueId === certificateId && !cert.deleted);
                 
                 if (certificate) {
                     displayCertificate(certificate);
@@ -346,6 +351,14 @@
         function displayCertificate(data) {
             document.getElementById('loadingSpinner').style.display = 'none';
             document.getElementById('certificateContent').style.display = 'block';
+            
+            // تحديث العنوان حسب نوع الشهادة
+            const headerTitle = document.querySelector('.certificate-header h1');
+            if (data.programType && data.programType.includes('الموحدة')) {
+                headerTitle.innerHTML = '<i class="fas fa-certificate me-2"></i>الشهادة الصحية الموحدة';
+            } else {
+                headerTitle.innerHTML = '<i class="fas fa-certificate me-2"></i>الشهادة الصحية';
+            }
             
             // ملء البيانات
             document.getElementById('amanah').textContent = data.amanah || '-';
@@ -409,12 +422,14 @@
             return date.toLocaleDateString('ar-SA', options);
         }
 
-        // تحميل البيانات عند بدء الصفحة
+        // تحميل البيانات عند بدء الصفحة فوراً
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                loadCertificate();
-            }, 1000);
+            // إخفاء المحتوى الافتراضي فوراً
+            document.getElementById('certificateContent').style.display = 'none';
+            
+            // تحميل البيانات فوراً بدون تأخير
+            loadCertificate();
         });
     </script>
 </body>
-</html> -->
+</html>

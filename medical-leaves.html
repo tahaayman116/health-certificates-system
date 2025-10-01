@@ -88,13 +88,19 @@
                                        
                                    
                                     <button id="inquiry-btn" class="btn btn-primary" style="margin-top: 10px;" onclick="submitInquiry()">استعلام</button>
+                                    
+                                    <div style="margin-top: 10px;">
+                                        <a id="back-btn" class="btn btn-primary" href="#" onclick="window.location.reload()">رجوع للاستعلامات</a>
+                                    </div>
                                 
                                 <div id="result" class="result-section"></div>
                             
                             <div id="new-inquiry-btn" style="display: none;">
                                 <button class="btn btn-primary mt-3" onclick="window.location.reload()">استعلام جديد</button>
+                                <div style="margin-top: 10px;">
+                                    <a class="btn btn-primary" href="#" onclick="window.location.reload()">رجوع للاستعلامات</a>
+                                </div>
                             </div>
-                            <a id="back-btn" class="btn btn-primary mb-3 mt-3" href="#" onclick="window.location.reload()">رجوع للاستعلامات</a>
                         </div>
                     </div>
                         
@@ -255,8 +261,8 @@
                                     (docData.serviceCode === serviceCode && docData.idNumber === idNumber) ||
                                     (docData.serviceCode === serviceCode && docData.medicalIdNumber === idNumber)
                                 ) {
-                                    // التأكد أنها إجازة مرضية وليس شهادة صحية
-                                    if (docData.serviceCode && !docData.amanah && !docData.municipality) {
+                                    // التأكد أنها إجازة مرضية وليس شهادة صحية وأنها غير محذوفة
+                                    if (docData.serviceCode && !docData.amanah && !docData.municipality && !docData.deleted) {
                                         foundDoc = docData;
                                         console.log('✅ تم العثور على الإجازة المرضية في Firebase:', doc.id);
                                     }
@@ -297,6 +303,12 @@
                     result.style.display = 'block';
                     inquiryBtn.style.display = 'none';
                     newInquiryBtn.style.display = 'block';
+                    
+                    // إخفاء زرار الرجوع الأول
+                    const backBtn = document.getElementById('back-btn');
+                    if (backBtn) {
+                        backBtn.style.display = 'none';
+                    }
                 } else {
                     errorMessage.style.display = 'block';
                 }
@@ -313,6 +325,12 @@
             document.getElementById('result').style.display = 'none';
             document.getElementById('inquiry-btn').style.display = 'block';
             document.getElementById('new-inquiry-btn').style.display = 'none';
+            
+            // إظهار زرار الرجوع الأول مرة أخرى
+            const backBtn = document.getElementById('back-btn');
+            if (backBtn) {
+                backBtn.style.display = 'block';
+            }
         }
     </script>
 
