@@ -132,7 +132,7 @@
         
         <div id="certificateContent" class="certificate-container" style="display: none;">
             <div class="certificate-header">
-                <h1 style="visibility: hidden;"><i class="fas fa-certificate me-2"></i>جاري التحميل...</h1>
+                <h1><i class="fas fa-certificate me-2"></i>الشهادة الصحية</h1>
                 <p class="mb-0">وزارة البلديات والإسكان - المملكة العربية السعودية</p>
             </div>
             
@@ -352,15 +352,13 @@
             document.getElementById('loadingSpinner').style.display = 'none';
             document.getElementById('certificateContent').style.display = 'block';
             
-            // تحديث العنوان حسب نوع الشهادة وإظهاره
+            // تحديث العنوان حسب نوع الشهادة
             const headerTitle = document.querySelector('.certificate-header h1');
             if (data.programType && data.programType.includes('الموحدة')) {
                 headerTitle.innerHTML = '<i class="fas fa-certificate me-2"></i>الشهادة الصحية الموحدة';
             } else {
                 headerTitle.innerHTML = '<i class="fas fa-certificate me-2"></i>الشهادة الصحية';
             }
-            // إظهار العنوان بعد تحديثه
-            headerTitle.style.visibility = 'visible';
             
             // ملء البيانات
             document.getElementById('amanah').textContent = data.amanah || '-';
@@ -426,7 +424,7 @@
 
         // تحميل البيانات عند بدء الصفحة فوراً
         document.addEventListener('DOMContentLoaded', function() {
-            // إخفاء المحتوى الافتراضي فوراً لمنع الوميض
+            // إخفاء المحتوى الافتراضي فوراً
             document.getElementById('certificateContent').style.display = 'none';
             
             // تحميل البيانات فوراً بدون تأخير
