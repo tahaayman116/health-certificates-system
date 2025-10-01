@@ -347,18 +347,20 @@
             }
         }
 
-        // عرض البيانات
+        // عرض بيانات الشهادة
         function displayCertificate(data) {
-            // تحديث العنوان حسب نوع الشهادة قبل إظهار المحتوى
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('certificateContent').style.display = 'block';
+            
+            // تحديث العنوان حسب نوع الشهادة وإظهاره
             const headerTitle = document.querySelector('.certificate-header h1');
             if (data.programType && data.programType.includes('الموحدة')) {
                 headerTitle.innerHTML = '<i class="fas fa-certificate me-2"></i>الشهادة الصحية الموحدة';
             } else {
                 headerTitle.innerHTML = '<i class="fas fa-certificate me-2"></i>الشهادة الصحية';
             }
-            
-            document.getElementById('loadingSpinner').style.display = 'none';
-            document.getElementById('certificateContent').style.display = 'block';
+            // إظهار العنوان بعد تحديثه
+            headerTitle.style.visibility = 'visible';
             
             // ملء البيانات
             document.getElementById('amanah').textContent = data.amanah || '-';
@@ -424,10 +426,16 @@
 
         // تحميل البيانات عند بدء الصفحة فوراً
         document.addEventListener('DOMContentLoaded', function() {
-            // إخفاء المحتوى الافتراضي فوراً
+            // إخفاء المحتوى الافتراضي فوراً لمنع الوميض
             document.getElementById('certificateContent').style.display = 'none';
             
-            // تحميل البيانات فوراً بدون تأخير (تحسين السرعة)
+            // إخفاء العنوان الافتراضي فوراً
+            const headerTitle = document.querySelector('.certificate-header h1');
+            if (headerTitle) {
+                headerTitle.style.visibility = 'hidden';
+            }
+            
+            // تحميل البيانات فوراً بدون تأخير
             loadCertificate();
         });
     </script>
