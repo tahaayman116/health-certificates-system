@@ -347,18 +347,18 @@
             }
         }
 
-        // عرض بيانات الشهادة
+        // عرض البيانات
         function displayCertificate(data) {
-            document.getElementById('loadingSpinner').style.display = 'none';
-            document.getElementById('certificateContent').style.display = 'block';
-            
-            // تحديث العنوان حسب نوع الشهادة
+            // تحديث العنوان حسب نوع الشهادة قبل إظهار المحتوى
             const headerTitle = document.querySelector('.certificate-header h1');
             if (data.programType && data.programType.includes('الموحدة')) {
                 headerTitle.innerHTML = '<i class="fas fa-certificate me-2"></i>الشهادة الصحية الموحدة';
             } else {
                 headerTitle.innerHTML = '<i class="fas fa-certificate me-2"></i>الشهادة الصحية';
             }
+            
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('certificateContent').style.display = 'block';
             
             // ملء البيانات
             document.getElementById('amanah').textContent = data.amanah || '-';

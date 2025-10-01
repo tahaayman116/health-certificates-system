@@ -97,9 +97,6 @@
                             
                             <div id="new-inquiry-btn" style="display: none;">
                                 <button class="btn btn-primary mt-3" onclick="window.location.reload()">استعلام جديد</button>
-                                <div style="margin-top: 10px;">
-                                    <a class="btn btn-primary" href="#" onclick="window.location.reload()">رجوع للاستعلامات</a>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -309,6 +306,10 @@
                     if (backBtn) {
                         backBtn.style.display = 'none';
                     }
+                    
+                    // إضافة زرار رجوع للاستعلامات مع استعلام جديد
+                    const backBtnHtml = '<div style="margin-top: 10px;"><a class="btn btn-primary" href="#" onclick="window.location.reload()">رجوع للاستعلامات</a></div>';
+                    newInquiryBtn.innerHTML += backBtnHtml;
                 } else {
                     errorMessage.style.display = 'block';
                 }
@@ -324,7 +325,11 @@
             document.getElementById('error-message').style.display = 'none';
             document.getElementById('result').style.display = 'none';
             document.getElementById('inquiry-btn').style.display = 'block';
-            document.getElementById('new-inquiry-btn').style.display = 'none';
+            
+            // إعادة تعيين محتوى زرار الاستعلام الجديد
+            const newInquiryBtn = document.getElementById('new-inquiry-btn');
+            newInquiryBtn.innerHTML = '<button class="btn btn-primary mt-3" onclick="window.location.reload()">استعلام جديد</button>';
+            newInquiryBtn.style.display = 'none';
             
             // إظهار زرار الرجوع الأول مرة أخرى
             const backBtn = document.getElementById('back-btn');
