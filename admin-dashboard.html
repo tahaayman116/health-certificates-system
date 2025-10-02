@@ -1080,36 +1080,229 @@
         // تحميل الشهادات المحلية
         function loadLocalCertificates() {
             try {
+                console.log('📁 تحميل الشهادات من localStorage...');
                 const localData = localStorage.getItem('certificates');
                 if (localData) {
-                    certificates = JSON.parse(localData);
+                    const allCertificates = JSON.parse(localData);
+                    // فلترة الشهادات غير المحذوفة
+                    certificates = allCertificates.filter(cert => !cert.deleted);
+                    console.log(`✅ تم تحميل ${certificates.length} شهادة من localStorage`);
                 } else {
                     certificates = [];
+                    console.log('📭 لا توجد شهادات في localStorage');
                 }
                 displayCertificates();
+                updateStatistics(); // تحديث الإحصائيات
             } catch (error) {
-                console.error('خطأ في تحميل الشهادات المحلية:', error);
+                console.error('❌ خطأ في تحميل الشهادات المحلية:', error);
                 certificates = [];
                 displayCertificates();
+                updateStatistics(); // تحديث الإحصائيات حتى لو كانت فارغة
+            }
+        }
+        
+        // تحميل الإجازات المرضية المحلية
+        function loadLocalMedicalLeaves() {
+            try {
+                console.log('🏥 تحميل الإجازات المرضية من localStorage...');
+                medicalLeaves = [];
+                
+                // البحث في جميع مفاتيح localStorage عن الإجازات المرضية
+                const allKeys = Object.keys(localStorage);
+                const medicalLeaveKeys = allKeys.filter(key => key.startsWith('medical-leave-'));
+                
+                medicalLeaveKeys.forEach(key => {
+                    try {
+                        const medicalLeaveData = localStorage.getItem(key);
+                        if (medicalLeaveData) {
+                            const medicalLeave = JSON.parse(medicalLeaveData);
+                            // إضافة الإجازات غير المحذوفة فقط
+                            if (!medicalLeave.deleted) {
+                                medicalLeaves.push(medicalLeave);
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`خطأ في تحميل الإجازة المرضية ${key}:`, error);
+                    }
+                });
+                
+                console.log(`✅ تم تحميل ${medicalLeaves.length} إجازة مرضية من localStorage`);
+                window.medicalLeaves = medicalLeaves; // حفظ في المتغير العام
+                displayMedicalLeaves();
+                updateMedicalLeavesStatistics(); // تحديث الإحصائيات
+            } catch (error) {
+                console.error('❌ خطأ في تحميل الإجازات المرضية المحلية:', error);
+                medicalLeaves = [];
+                window.medicalLeaves = medicalLeaves;
+                displayMedicalLeaves();
+                updateMedicalLeavesStatistics(); // تحديث الإحصائيات حتى لو كانت فارغة
+            }
+        }
+        
+        // تحديث الإحصائيات المحلية
+        function updateLocalStatistics() {
+            try {
+                console.log('📊 تحديث الإحصائيات من البيانات المحلية...');
+                
+                const today = new Date().toDateString();
+                let totalCertificates = 0;
+                let todayCertificates = 0;
+                let totalMedicalLeaves = 0;
+                let todayMedicalLeaves = 0;
+                
+                // حساب إحصائيات الشهادات
+                if (certificates && certificates.length > 0) {
+                    totalCertificates = certificates.filter(cert => !cert.deleted).length;
+                    todayCertificates = certificates.filter(cert => {
+                        if (cert.deleted) return false;
+                        const certDate = new Date(cert.createdAt || cert.created_at);
+                        return certDate.toDateString() === today;
+                    }).length;
+                }
+                
+                // حساب إحصائيات الإجازات المرضية
+                if (medicalLeaves && medicalLeaves.length > 0) {
+                    totalMedicalLeaves = medicalLeaves.filter(leave => !leave.deleted).length;
+                    todayMedicalLeaves = medicalLeaves.filter(leave => {
+                        if (leave.deleted) return false;
+                        const leaveDate = new Date(leave.created_at);
+                        return leaveDate.toDateString() === today;
+                    }).length;
+                }
+                
+                // تحديث العرض
+                document.getElementById('totalCertificates').textContent = totalCertificates;
+                document.getElementById('todayCertificates').textContent = todayCertificates;
+                document.getElementById('totalMedicalLeaves').textContent = totalMedicalLeaves;
+                document.getElementById('todayMedicalLeaves').textContent = todayMedicalLeaves;
+                
+                console.log(`📈 الإحصائيات: شهادات (${totalCertificates}/${todayCertificates}) - إجازات (${totalMedicalLeaves}/${todayMedicalLeaves})`);
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحديث الإحصائيات المحلية:', error);
+            }
+        }
+        
+        // تحديث إحصائيات الإجازات المرضية من localStorage
+        function updateLocalMedicalLeavesStatistics() {
+            try {
+                console.log('📊 حساب إحصائيات الإجازات المرضية من localStorage...');
+                
+                const today = new Date().toDateString();
+                let totalMedicalLeaves = 0;
+                let todayMedicalLeaves = 0;
+                
+                // البحث في جميع مفاتيح localStorage عن الإجازات المرضية
+                const allKeys = Object.keys(localStorage);
+                const medicalLeaveKeys = allKeys.filter(key => key.startsWith('medical-leave-'));
+                
+                medicalLeaveKeys.forEach(key => {
+                    try {
+                        const medicalLeaveData = localStorage.getItem(key);
+                        if (medicalLeaveData) {
+                            const medicalLeave = JSON.parse(medicalLeaveData);
+                            // عد الإجازات غير المحذوفة فقط
+                            if (!medicalLeave.deleted) {
+                                totalMedicalLeaves++;
+                                
+                                // إحصائيات اليوم
+                                const leaveDate = new Date(medicalLeave.created_at);
+                                if (leaveDate.toDateString() === today) {
+                                    todayMedicalLeaves++;
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`خطأ في قراءة الإجازة المرضية ${key}:`, error);
+                    }
+                });
+                
+                // تحديث العرض
+                document.getElementById('totalMedicalLeaves').textContent = totalMedicalLeaves;
+                document.getElementById('todayMedicalLeaves').textContent = todayMedicalLeaves;
+                
+                console.log(`✅ إحصائيات الإجازات المرضية المحلية: إجمالي ${totalMedicalLeaves} - اليوم ${todayMedicalLeaves}`);
+                
+            } catch (error) {
+                console.error('❌ خطأ في حساب إحصائيات الإجازات المرضية المحلية:', error);
+                document.getElementById('totalMedicalLeaves').textContent = '0';
+                document.getElementById('todayMedicalLeaves').textContent = '0';
             }
         }
 
-        // تحميل الشهادات
+        // تحميل الشهادات من Firebase فقط - سريع البرق!
+        async function loadCertificatesFromFirebase() {
+            try {
+                console.log('🔥 تحميل الشهادات من Firebase - سريع جداً!');
+                
+                // timeout سريع جداً - 3 ثوان فقط!
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Firebase timeout')), 3000)
+                );
+                
+                // استعلام سريع بدون ترتيب - أسرع ما يمكن!
+                const queryPromise = window.firebaseModules.getDocs(
+                    window.firebaseModules.collection(window.db, 'certificates')
+                );
+                
+                const querySnapshot = await Promise.race([queryPromise, timeoutPromise]);
+                
+                const firebaseCertificates = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // تجاهل الشهادات المحذوفة وتأكد أنها شهادة صحية وليس إجازة مرضية
+                    const isHealthCertificate = data.amanah || data.uniqueId || (!data.idNumber && data.serviceCode);
+                    const isMedicalLeave = data.serviceCode && data.idNumber && !data.amanah && !data.uniqueId;
+                    
+                    if (!data.deleted && isHealthCertificate && !isMedicalLeave) {
+                        firebaseCertificates.push({ id: doc.id, ...data });
+                    }
+                });
+                
+                // تحديث البيانات دائماً - Firebase هو المصدر الوحيد!
+                certificates = firebaseCertificates;
+                displayCertificates();
+                updateStatistics();
+                console.log(`🚀 تم تحميل ${certificates.length} شهادة من Firebase بسرعة البرق!`);
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحديث الشهادات من Firebase:', error);
+                
+                // معالجة خاصة لخطأ 400
+                if (error.toString().includes('400') || error.message.includes('Bad Request')) {
+                    console.log('🚨 خطأ 400 في تحميل الشهادات - إعادة تهيئة Firebase...');
+                    setTimeout(() => {
+                        reinitializeFirebase();
+                    }, 2000);
+                }
+            }
+        }
+
+        // تحميل الشهادات (الدالة الأصلية)
         async function loadCertificates() {
             try {
+                console.log('🔄 بدء تحميل الشهادات...');
+                
                 // التحقق من توفر Firebase
                 if (!window.firebaseModules || !window.db) {
-                    console.log('Firebase غير متاح، سيتم تحميل البيانات المحلية فقط');
+                    console.log('⚠️ Firebase غير متاح، سيتم تحميل البيانات المحلية فقط');
                     loadLocalCertificates();
                     return;
                 }
                 
-                const querySnapshot = await window.firebaseModules.getDocs(
+                // إضافة timeout للاستعلام
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Firebase timeout')), 10000)
+                );
+                
+                const queryPromise = window.firebaseModules.getDocs(
                     window.firebaseModules.query(
                         window.firebaseModules.collection(window.db, 'certificates'),
                         window.firebaseModules.orderBy('createdAt', 'desc')
                     )
                 );
+                
+                const querySnapshot = await Promise.race([queryPromise, timeoutPromise]);
                 
                 certificates = [];
                 querySnapshot.forEach((doc) => {
@@ -1120,27 +1313,18 @@
                     }
                 });
                 
+                console.log(`✅ تم تحميل ${certificates.length} شهادة من Firebase`);
                 displayCertificates();
-                updateStatistics();
+                updateStatistics(); // تحديث الإحصائيات فوراً
                 
             } catch (error) {
-                console.error('خطأ في تحميل الشهادات:', error);
+                console.error('❌ خطأ في تحميل الشهادات من Firebase:', error);
+                console.log('🔄 التحميل من البيانات المحلية كبديل...');
                 // في حالة عدم توفر Firebase، استخدم البيانات المحلية
                 loadLocalCertificates();
             }
         }
 
-        // تحميل البيانات المحلية (للاختبار)
-        function loadLocalCertificates() {
-            const localData = localStorage.getItem('certificates');
-            if (localData) {
-                const allCertificates = JSON.parse(localData);
-                // تجاهل الشهادات المحذوفة
-                certificates = allCertificates.filter(cert => !cert.deleted);
-                displayCertificates();
-                updateStatistics();
-            }
-        }
 
         // عرض الشهادات
         function displayCertificates(certsToDisplay = certificates) {
@@ -1166,6 +1350,10 @@
                 const row = document.createElement('tr');
                 const issueDate = cert.issueDate ? new Date(cert.issueDate).toLocaleDateString('ar-SA') : 'غير محدد';
                 
+                // إنشاء معرف آمن للشهادة
+                const safeUniqueId = cert.uniqueId || cert.serviceCode || cert.id || `cert_${Date.now()}`;
+                console.log('🔍 معرف الشهادة:', { uniqueId: cert.uniqueId, serviceCode: cert.serviceCode, id: cert.id, safeUniqueId });
+                
                 row.innerHTML = `
                     <td>
                         ${cert.imageBase64 ? 
@@ -1187,13 +1375,13 @@
                     </td>
                     <td>
                         <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewCertificate('${cert.uniqueId}')" title="عرض الشهادة">
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewCertificate('${safeUniqueId}')" title="عرض الشهادة">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-success" onclick="copyLink('${cert.uniqueId}', this)" title="نسخ الرابط">
+                            <button class="btn btn-sm btn-outline-success" onclick="copyLink('${safeUniqueId}', this)" title="نسخ الرابط">
                                 <i class="fas fa-link"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCertificate('${cert.uniqueId}', '${cert.id || ''}')" title="حذف الشهادة">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCertificate('${safeUniqueId}', '${cert.id || ''}')" title="حذف الشهادة">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
@@ -1295,111 +1483,210 @@
 
         // إخفاء شهادة (soft delete)
         async function deleteCertificate(uniqueId, firebaseId = '') {
-            console.log('محاولة إخفاء الشهادة:', { uniqueId, firebaseId });
+            console.log('🔥 محاولة إخفاء الشهادة:', { uniqueId, firebaseId });
+            
+            if (!uniqueId || uniqueId === 'undefined') {
+                console.error('❌ معرف الشهادة غير صحيح:', uniqueId);
+                alert('خطأ: معرف الشهادة غير صحيح');
+                return;
+            }
+            
             if (confirm('هل أنت متأكد من إخفاء هذه الشهادة؟ (يمكن استعادتها لاحقاً)')) {
                 try {
                     let updated = false;
                     
                     // إذا كان لدينا معرف Firebase، حدث مباشرة
-                    if (firebaseId && !firebaseId.startsWith('local_')) {
+                    if (firebaseId && firebaseId !== '' && !firebaseId.startsWith('local_') && !firebaseId.startsWith('cert_')) {
                         try {
+                            console.log('🔥 محاولة التحديث بـ Firebase ID:', firebaseId);
+                            
+                            // التأكد من وجود Firebase modules
+                            if (!window.firebaseModules || !window.db) {
+                                throw new Error('Firebase غير متاح');
+                            }
+                            
                             const docRef = window.firebaseModules.doc(window.db, 'certificates', firebaseId);
-                            await window.firebaseModules.updateDoc(docRef, {
+                            
+                            // إضافة timeout للعملية
+                            const updatePromise = window.firebaseModules.updateDoc(docRef, {
                                 deleted: true,
                                 deletedAt: new Date().toISOString()
                             });
+                            
+                            const timeoutPromise = new Promise((_, reject) => 
+                                setTimeout(() => reject(new Error('Firebase update timeout')), 5000)
+                            );
+                            
+                            await Promise.race([updatePromise, timeoutPromise]);
                             updated = true;
-                            console.log('تم إخفاء الشهادة في Firebase باستخدام المعرف المباشر');
+                            console.log('✅ تم إخفاء الشهادة في Firebase باستخدام المعرف المباشر');
                         } catch (error) {
-                            console.log('فشل الحذف بالمعرف المباشر، سأحاول البحث بـ uniqueId');
+                            console.error('❌ فشل الحذف بالمعرف المباشر:', error);
+                            console.log('🔄 سأحاول البحث بـ uniqueId...');
                         }
                     }
                     
                     // إذا لم ينجح التحديث المباشر، ابحث بـ uniqueId
                     if (!updated) {
-                        const q = window.firebaseModules.query(
+                        console.log('🔍 البحث بـ uniqueId:', uniqueId);
+                        let q = window.firebaseModules.query(
                             window.firebaseModules.collection(window.db, 'certificates'),
                             window.firebaseModules.where('uniqueId', '==', uniqueId)
                         );
                         
-                        const querySnapshot = await window.firebaseModules.getDocs(q);
+                        // إضافة timeout للبحث
+                        const searchPromise = window.firebaseModules.getDocs(q);
+                        const searchTimeout = new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error('Firebase search timeout')), 5000)
+                        );
+                        
+                        let querySnapshot = await Promise.race([searchPromise, searchTimeout]);
+                        
+                        // إذا لم يجد بـ uniqueId، جرب البحث بـ serviceCode (للشهادات فقط)
+                        if (querySnapshot.empty) {
+                            console.log('🔍 البحث بـ serviceCode للشهادات فقط:', uniqueId);
+                            q = window.firebaseModules.query(
+                                window.firebaseModules.collection(window.db, 'certificates'),
+                                window.firebaseModules.where('serviceCode', '==', uniqueId),
+                                window.firebaseModules.where('amanah', '!=', null) // فقط الشهادات الصحية
+                            );
+                            
+                            const searchPromise2 = window.firebaseModules.getDocs(q);
+                            const searchTimeout2 = new Promise((_, reject) => 
+                                setTimeout(() => reject(new Error('Firebase search timeout')), 5000)
+                            );
+                            
+                            querySnapshot = await Promise.race([searchPromise2, searchTimeout2]);
+                        }
                         
                         if (!querySnapshot.empty) {
-                            const docRef = querySnapshot.docs[0].ref;
-                            await window.firebaseModules.updateDoc(docRef, {
-                                deleted: true,
-                                deletedAt: new Date().toISOString()
-                            });
-                            updated = true;
-                            console.log('تم إخفاء الشهادة في Firebase باستخدام البحث');
+                            // التحقق من أن هذا شهادة صحية وليس إجازة مرضية
+                            const docData = querySnapshot.docs[0].data();
+                            const isHealthCertificate = docData.amanah || docData.uniqueId || !docData.idNumber;
+                            
+                            if (isHealthCertificate) {
+                                const docRef = querySnapshot.docs[0].ref;
+                                
+                                console.log('✅ تأكيد: هذا شهادة صحية، يمكن حذفها');
+                                
+                                // إضافة timeout للتحديث
+                                const updatePromise = window.firebaseModules.updateDoc(docRef, {
+                                    deleted: true,
+                                    deletedAt: new Date().toISOString()
+                                });
+                                
+                                const updateTimeout = new Promise((_, reject) => 
+                                    setTimeout(() => reject(new Error('Firebase update timeout')), 5000)
+                                );
+                                
+                                await Promise.race([updatePromise, updateTimeout]);
+                                updated = true;
+                                console.log('✅ تم إخفاء الشهادة الصحية في Firebase باستخدام البحث');
+                            } else {
+                                console.log('⚠️ هذا إجازة مرضية وليس شهادة صحية - لن يتم حذفها');
+                            }
+                        } else {
+                            console.log('⚠️ لم يتم العثور على الشهادة في Firebase');
                         }
                     }
                     
-                    // تحديث البيانات المحلية في جميع الحالات
-                    const localData = localStorage.getItem('certificates');
-                    if (localData) {
-                        const certificates = JSON.parse(localData);
-                        const updatedCertificates = certificates.map(cert => {
-                            if (cert.uniqueId === uniqueId) {
-                                return { ...cert, deleted: true, deletedAt: new Date().toISOString() };
-                            }
-                            return cert;
-                        });
-                        localStorage.setItem('certificates', JSON.stringify(updatedCertificates));
-                    }
-                    
-                    loadCertificates();
-                    
+                    // Firebase فقط - إعادة تحميل البيانات
                     if (updated) {
+                        console.log('🔥 تم إخفاء الشهادة من Firebase بنجاح!');
                         alert('تم إخفاء الشهادة بنجاح! يمكن استعادتها من قسم المحذوفات.');
+                        
+                        // إعادة تحميل البيانات من Firebase (الشهادات والإجازات منفصلة)
+                        loadCertificatesFromFirebase();
+                        loadMedicalLeavesFromFirebase(); // تحديث الإجازات أيضاً للتأكد من العدادات
+                        loadDeletedItems(); // تحديث المحذوفات
                     } else {
-                        alert('تم إخفاء الشهادة من البيانات المحلية!');
+                        console.log('❌ فشل في إخفاء الشهادة');
+                        alert('فشل في إخفاء الشهادة. يرجى المحاولة مرة أخرى.');
                     }
                     
                 } catch (error) {
-                    console.error('خطأ في إخفاء الشهادة:', error);
+                    console.error('❌ خطأ في إخفاء الشهادة:', error);
                     
-                    // في حالة فشل Firebase، حدث البيانات المحلية على الأقل
-                    const localData = localStorage.getItem('certificates');
-                    if (localData) {
-                        const certificates = JSON.parse(localData);
-                        const updatedCertificates = certificates.map(cert => {
-                            if (cert.uniqueId === uniqueId) {
-                                return { ...cert, deleted: true, deletedAt: new Date().toISOString() };
-                            }
-                            return cert;
-                        });
-                        localStorage.setItem('certificates', JSON.stringify(updatedCertificates));
-                        loadCertificates();
-                        alert('تم إخفاء الشهادة من البيانات المحلية!');
-                    } else {
-                        alert('حدث خطأ في إخفاء الشهادة.');
+                    // معالجة خاصة لأخطاء Firebase
+                    let errorMessage = 'حدث خطأ في إخفاء الشهادة.';
+                    
+                    if (error.message.includes('timeout')) {
+                        errorMessage = 'انتهت مهلة الاتصال بـ Firebase. يرجى المحاولة مرة أخرى.';
+                    } else if (error.message.includes('400') || error.message.includes('Bad Request') || error.toString().includes('400')) {
+                        errorMessage = 'خطأ في الاتصال بـ Firebase (400). جاري إعادة المحاولة...';
+                        console.log('🔄 خطأ 400 - محاولة إعادة الاتصال بـ Firebase...');
+                        
+                        // إعادة تهيئة Firebase
+                        reinitializeFirebase();
+                        
+                        // محاولة إعادة تحميل البيانات بعد تأخير
+                        setTimeout(() => {
+                            console.log('🔄 إعادة محاولة تحميل البيانات...');
+                            loadCertificatesFromFirebase();
+                        }, 3000);
+                    } else if (error.message.includes('permission')) {
+                        errorMessage = 'ليس لديك صلاحية لتعديل هذه الشهادة.';
                     }
+                    
+                    alert(errorMessage);
+                    
+                    // في حالة فشل Firebase، لا نفعل شيء (Firebase فقط)
+                    console.log('🔥 Firebase فقط - لا fallback إلى localStorage');
                 }
             }
         }
 
         // تحديث الإحصائيات
         function updateStatistics() {
-            const total = certificates.length;
-            const today = new Date().toDateString();
-            const todayCount = certificates.filter(cert => 
-                new Date(cert.createdAt).toDateString() === today
-            ).length;
-            
-            document.getElementById('totalCertificates').textContent = total;
-            document.getElementById('todayCertificates').textContent = todayCount;
-            
-            // إحصائيات الإجازات المرضية
-            updateMedicalLeavesStatistics();
+            try {
+                console.log('📊 تحديث إحصائيات الشهادات...');
+                
+                const total = certificates ? certificates.length : 0;
+                const today = new Date().toDateString();
+                const todayCount = certificates ? certificates.filter(cert => {
+                    const certDate = new Date(cert.createdAt || cert.created_at);
+                    return certDate.toDateString() === today;
+                }).length : 0;
+                
+                document.getElementById('totalCertificates').textContent = total;
+                document.getElementById('todayCertificates').textContent = todayCount;
+                
+                console.log(`✅ إحصائيات الشهادات: إجمالي ${total} - اليوم ${todayCount}`);
+                
+                // إحصائيات الإجازات المرضية
+                updateMedicalLeavesStatistics();
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحديث إحصائيات الشهادات:', error);
+                document.getElementById('totalCertificates').textContent = '0';
+                document.getElementById('todayCertificates').textContent = '0';
+            }
         }
 
         // تحديث إحصائيات الإجازات المرضية من Firebase
         async function updateMedicalLeavesStatistics() {
             try {
+                console.log('📊 تحديث إحصائيات الإجازات المرضية...');
+                
+                // إذا كانت البيانات متاحة في المتغير العام، استخدمها
+                if (window.medicalLeaves && window.medicalLeaves.length > 0) {
+                    const total = window.medicalLeaves.length;
+                    const today = new Date().toDateString();
+                    const todayCount = window.medicalLeaves.filter(leave => {
+                        const leaveDate = new Date(leave.created_at);
+                        return leaveDate.toDateString() === today;
+                    }).length;
+                    
+                    document.getElementById('totalMedicalLeaves').textContent = total;
+                    document.getElementById('todayMedicalLeaves').textContent = todayCount;
+                    
+                    console.log(`✅ إحصائيات الإجازات المرضية: إجمالي ${total} - اليوم ${todayCount}`);
+                    return;
+                }
+                
                 if (!window.firebaseModules || !window.db) {
-                    document.getElementById('totalMedicalLeaves').textContent = '0';
-                    document.getElementById('todayMedicalLeaves').textContent = '0';
+                    console.log('⚠️ Firebase غير متاح، حساب الإحصائيات من localStorage...');
+                    updateLocalMedicalLeavesStatistics();
                     return;
                 }
 
@@ -1587,22 +1874,75 @@
             }
         });
 
-        // دالة تحميل قائمة الإجازات المرضية من Firebase
+        // تحميل الإجازات المرضية من Firebase فقط - سريع البرق!
+        async function loadMedicalLeavesFromFirebase() {
+            try {
+                console.log('🔥 تحميل الإجازات المرضية من Firebase - سريع جداً!');
+                
+                const { collection, getDocs, orderBy, query } = window.firebaseModules;
+                
+                // timeout سريع جداً - 3 ثوان فقط!
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Firebase timeout')), 3000)
+                );
+                
+                // استعلام سريع بدون ترتيب - أسرع ما يمكن!
+                const queryPromise = getDocs(collection(window.db, 'certificates'));
+                const querySnapshot = await Promise.race([queryPromise, timeoutPromise]);
+                const firebaseMedicalLeaves = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // التأكد أن هذا إجازة مرضية وليس شهادة صحية وأنها غير محذوفة
+                    const isHealthCertificate = data.amanah || data.uniqueId || (!data.idNumber && data.serviceCode);
+                    const isMedicalLeave = data.serviceCode && data.idNumber && !data.amanah && !data.uniqueId;
+                    
+                    if (!data.deleted && isMedicalLeave && !isHealthCertificate) {
+                        firebaseMedicalLeaves.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    }
+                });
+
+                // تحديث البيانات دائماً - Firebase هو المصدر الوحيد!
+                window.medicalLeaves = firebaseMedicalLeaves;
+                displayMedicalLeaves();
+                updateMedicalLeavesStatistics();
+                console.log(`🚀 تم تحميل ${firebaseMedicalLeaves.length} إجازة مرضية من Firebase بسرعة البرق!`);
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحديث الإجازات المرضية من Firebase:', error);
+                
+                // معالجة خاصة لخطأ 400
+                if (error.toString().includes('400') || error.message.includes('Bad Request')) {
+                    console.log('🚨 خطأ 400 في تحميل الإجازات المرضية - إعادة تهيئة Firebase...');
+                    setTimeout(() => {
+                        reinitializeFirebase();
+                    }, 2000);
+                }
+            }
+        }
+
+        // دالة تحميل قائمة الإجازات المرضية من Firebase (الدالة الأصلية)
         async function loadMedicalLeaves() {
             const medicalLeavesList = document.getElementById('medicalLeavesList');
             
             try {
+                console.log('🔄 بدء تحميل الإجازات المرضية...');
+                
                 if (!window.firebaseModules || !window.db) {
-                    medicalLeavesList.innerHTML = `
-                        <div class="text-center text-muted py-4">
-                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
-                            <p>Firebase غير متاح</p>
-                        </div>
-                    `;
+                    console.log('⚠️ Firebase غير متاح، سيتم تحميل البيانات المحلية فقط');
+                    loadLocalMedicalLeaves();
                     return;
                 }
 
                 const { collection, getDocs, orderBy, query } = window.firebaseModules;
+                
+                // إضافة timeout للاستعلام
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Firebase timeout')), 10000)
+                );
                 
                 // جلب جميع البيانات من Firebase (بدون فلترة معقدة)
                 const q = query(
@@ -1610,7 +1950,8 @@
                     orderBy('created_at', 'desc')
                 );
                 
-                const querySnapshot = await getDocs(q);
+                const queryPromise = getDocs(q);
+                const querySnapshot = await Promise.race([queryPromise, timeoutPromise]);
                 const medicalLeaves = [];
                 
                 querySnapshot.forEach((doc) => {
@@ -1624,48 +1965,58 @@
                     }
                 });
 
-                if (medicalLeaves.length === 0) {
-                    medicalLeavesList.innerHTML = `
-                        <div class="text-center text-muted py-4">
-                            <i class="fas fa-calendar-alt fa-3x mb-3"></i>
-                            <p>لا توجد إجازات مرضية محفوظة</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>رمز الخدمة</th><th>رقم الهوية</th><th>الاسم</th><th>تاريخ الحفظ</th><th>الإجراءات</th></tr></thead><tbody>';
+                console.log(`✅ تم تحميل ${medicalLeaves.length} إجازة مرضية من Firebase`);
                 
-                medicalLeaves.forEach(leave => {
-                    const date = new Date(leave.created_at).toLocaleDateString('ar-SA');
-                    
-                    html += `
-                        <tr>
-                            <td>${leave.serviceCode}</td>
-                            <td>${leave.idNumber}</td>
-                            <td>${leave.name || 'غير محدد'}</td>
-                            <td>${date}</td>
-                            <td>
-                                <button class="btn btn-danger btn-sm" onclick="deleteMedicalLeaveFromFirebase('${leave.id}', '${leave.serviceCode}', '${leave.idNumber}')" title="حذف الإجازة المرضية">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                html += '</tbody></table></div>';
-                medicalLeavesList.innerHTML = html;
+                // حفظ البيانات في المتغير العام
+                window.medicalLeaves = medicalLeaves;
+                displayMedicalLeaves();
+                updateMedicalLeavesStatistics(); // تحديث الإحصائيات فوراً
                 
             } catch (error) {
-                console.error('خطأ في تحميل الإجازات المرضية:', error);
+                console.error('❌ خطأ في تحميل الإجازات المرضية من Firebase:', error);
+                console.log('🔄 التحميل من البيانات المحلية كبديل...');
+                // في حالة عدم توفر Firebase، استخدم البيانات المحلية
+                loadLocalMedicalLeaves();
+            }
+        }
+        
+        // عرض الإجازات المرضية
+        function displayMedicalLeaves() {
+            const medicalLeavesList = document.getElementById('medicalLeavesList');
+            const medicalLeavesToDisplay = window.medicalLeaves || [];
+            
+            if (medicalLeavesToDisplay.length === 0) {
                 medicalLeavesList.innerHTML = `
-                    <div class="text-center text-danger py-4">
-                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
-                        <p>خطأ في تحميل البيانات</p>
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                        <p>لا توجد إجازات مرضية محفوظة</p>
                     </div>
                 `;
+                return;
             }
+
+            let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>رمز الخدمة</th><th>رقم الهوية</th><th>الاسم</th><th>تاريخ الحفظ</th><th>الإجراءات</th></tr></thead><tbody>';
+            
+            medicalLeavesToDisplay.forEach(leave => {
+                const date = new Date(leave.created_at).toLocaleDateString('ar-SA');
+                
+                html += `
+                    <tr>
+                        <td>${leave.serviceCode}</td>
+                        <td>${leave.idNumber}</td>
+                        <td>${leave.name || leave.fullName || 'غير محدد'}</td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteMedicalLeaveFromFirebase('${leave.id}', '${leave.serviceCode}', '${leave.idNumber}')" title="حذف الإجازة المرضية">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table></div>';
+            medicalLeavesList.innerHTML = html;
         }
 
         // دالة حذف الإجازة المرضية
@@ -1745,24 +2096,71 @@
             }
         }
 
-        // تحميل الشهادات والإجازات المرضية عند تحميل الصفحة
+        // متغير لتتبع محاولات التحميل
+        let initializationAttempts = 0;
+        const MAX_ATTEMPTS = 3; // أقصى 3 محاولات (3 ثوان) - أسرع
+        let dataLoaded = false; // لتجنب التحميل المتكرر
+        
+        // إظهار رسالة التحميل
+        function showLoadingMessage() {
+            // تحديث العدادات برسالة التحميل
+            document.getElementById('totalCertificates').textContent = '...';
+            document.getElementById('todayCertificates').textContent = '...';
+            document.getElementById('totalMedicalLeaves').textContent = '...';
+            document.getElementById('todayMedicalLeaves').textContent = '...';
+        }
+        
+        // إخفاء رسالة التحميل
+        function hideLoadingMessage() {
+            // سيتم تحديث العدادات بالقيم الفعلية في دوال التحديث
+        }
+        
+        // تحميل الشهادات والإجازات المرضية عند تحميل الصفحة - Firebase فقط!
         function initializeData() {
-            // انتظار تحميل Firebase
-            if (window.firebaseModules && window.db) {
-                loadCertificates();
-                loadMedicalLeaves();
-                // تحميل العناصر المحذوفة أيضاً
-                loadDeletedItems();
-            } else {
-                // إعادة المحاولة بعد ثانية واحدة
-                setTimeout(initializeData, 1000);
+            if (dataLoaded) {
+                console.log('✅ البيانات محملة بالفعل');
+                return;
             }
             
-            // تعيين التاريخ الافتراضي لحقول التاريخ
+            console.log(`🔥 Firebase ONLY - محاولة التحميل رقم ${initializationAttempts + 1}`);
+            
+            // تعيين التاريخ الافتراضي لحقول التاريخ (يعمل دائماً)
             setDefaultDates();
             
-            // إضافة مستمعات الأحداث لحساب المدة تلقائياً
+            // إضافة مستمعات الأحداث لحساب المدة تلقائياً (يعمل دائماً)
             setupDateCalculation();
+            
+            // Firebase فقط - بسرعة البرق! تحميل متوازي
+            if (window.firebaseModules && window.db) {
+                console.log('🚀 Firebase متاح - تحميل متوازي سريع جداً!');
+                
+                // تحميل متوازي - كل شيء في نفس الوقت!
+                Promise.all([
+                    loadCertificatesFromFirebase(),
+                    loadMedicalLeavesFromFirebase(),
+                    loadDeletedItems()
+                ]).then(() => {
+                    console.log('🔥 تم تحميل جميع البيانات من Firebase بسرعة البرق!');
+                }).catch(error => {
+                    console.error('❌ خطأ في التحميل المتوازي:', error);
+                });
+                
+                dataLoaded = true;
+            } else {
+                initializationAttempts++;
+                
+                if (initializationAttempts < MAX_ATTEMPTS) {
+                    console.log(`⏳ انتظار Firebase... (${initializationAttempts}/${MAX_ATTEMPTS})`);
+                    setTimeout(initializeData, 200); // محاولة كل 0.2 ثانية - سريع جداً!
+                } else {
+                    console.log('❌ Firebase غير متاح نهائياً');
+                    // عرض رسالة خطأ
+                    document.getElementById('totalCertificates').textContent = 'خطأ';
+                    document.getElementById('todayCertificates').textContent = 'خطأ';
+                    document.getElementById('totalMedicalLeaves').textContent = 'خطأ';
+                    document.getElementById('todayMedicalLeaves').textContent = 'خطأ';
+                }
+            }
         }
         
         // تعيين التاريخ الافتراضي
@@ -1807,8 +2205,46 @@
             }
         }
         
-        // بدء التحميل
-        initializeData();
+        // تحميل فوري عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 الصفحة جاهزة، بدء التحميل الفوري...');
+            initializeData();
+        });
+        
+        // تحميل احتياطي إذا لم يتم تحميل DOMContentLoaded
+        if (document.readyState === 'loading') {
+            // الصفحة لا تزال تحمل
+            document.addEventListener('DOMContentLoaded', initializeData);
+        } else {
+            // الصفحة محملة بالفعل
+            console.log('📄 الصفحة محملة بالفعل، بدء التحميل...');
+            initializeData();
+        }
+        
+        // Firebase فقط - لا حاجة للتحديث الدوري!
+        console.log('🔥 Firebase ONLY - لا تحديث دوري، Firebase هو المصدر الوحيد!');
+        
+        // دالة لإعادة تهيئة Firebase في حالة الأخطاء
+        function reinitializeFirebase() {
+            console.log('🔄 إعادة تهيئة Firebase...');
+            
+            // إعادة تعيين متغير التحميل
+            dataLoaded = false;
+            initializationAttempts = 0;
+            
+            // محاولة إعادة التحميل
+            setTimeout(() => {
+                initializeData();
+            }, 1000);
+        }
+        
+        // مراقبة أخطاء Firebase
+        window.addEventListener('error', function(event) {
+            if (event.message && event.message.includes('firestore')) {
+                console.log('🚨 تم اكتشاف خطأ Firebase، محاولة إعادة التهيئة...');
+                reinitializeFirebase();
+            }
+        });
 
         // تنظيف localStorage من الشهادات المحذوفة
         async function cleanupLocalStorage() {
@@ -1949,15 +2385,24 @@
 
             console.log(`📊 عرض ${items.length} عنصر محذوف`);
             items.forEach((item, index) => {
-                // تحديد نوع العنصر بطريقة أفضل
-                const isLeave = item.serviceCode && !item.uniqueId;
-                const itemType = isLeave ? 'إجازة مرضية' : 'شهادة صحية';
+                // تحديد نوع العنصر بدقة أكبر
+                const isHealthCertificate = item.amanah || item.uniqueId || (!item.idNumber && item.serviceCode);
+                const isMedicalLeave = item.serviceCode && item.idNumber && !item.amanah && !item.uniqueId;
+                
+                const itemType = isMedicalLeave ? 'إجازة مرضية' : 'شهادة صحية';
                 const itemName = item.name || item.fullName || '-';
-                const itemId = isLeave ? item.idNumber : (item.medicalIdNumber || item.idNumber || '-');
+                const itemId = isMedicalLeave ? item.idNumber : (item.medicalIdNumber || item.idNumber || '-');
                 const deletedDate = item.deletedAt ? new Date(item.deletedAt).toLocaleDateString('ar-SA') : '-';
                 const uniqueIdentifier = item.uniqueId || item.serviceCode;
                 
-                console.log(`📄 عنصر ${index + 1}: ${itemName} (${itemType}) - معرف: ${uniqueIdentifier}`);
+                console.log(`📄 عنصر ${index + 1}: ${itemName} (${itemType}) - معرف: ${uniqueIdentifier}`, {
+                    isHealthCertificate,
+                    isMedicalLeave,
+                    hasAmanah: !!item.amanah,
+                    hasUniqueId: !!item.uniqueId,
+                    hasIdNumber: !!item.idNumber,
+                    hasServiceCode: !!item.serviceCode
+                });
                 
                 const row = `
                     <tr>
@@ -1965,7 +2410,7 @@
                         <td>${itemName}</td>
                         <td>${itemId}</td>
                         <td>
-                            <span class="badge ${isLeave ? 'bg-warning' : 'bg-info'}">
+                            <span class="badge ${isMedicalLeave ? 'bg-warning' : 'bg-info'}">
                                 ${itemType}
                             </span>
                         </td>
@@ -2004,7 +2449,7 @@
                             
                             let querySnapshot = await window.firebaseModules.getDocs(q);
                             
-                            // إذا لم يتم العثور عليه، جرب البحث بـ serviceCode (للإجازات المرضية)
+                            // إذا لم يتم العثور عليه، جرب البحث بـ serviceCode
                             if (querySnapshot.empty) {
                                 console.log('🔄 لم يتم العثور بـ uniqueId، جرب serviceCode...');
                                 q = window.firebaseModules.query(
@@ -2015,14 +2460,45 @@
                             }
                             
                             if (!querySnapshot.empty) {
+                                // التحقق من نوع العنصر قبل الاستعادة
+                                const docData = querySnapshot.docs[0].data();
                                 const docRef = querySnapshot.docs[0].ref;
+                                
+                                // تحديد نوع العنصر
+                                const isHealthCertificate = docData.amanah || docData.uniqueId || !docData.idNumber;
+                                const isMedicalLeave = docData.serviceCode && docData.idNumber && !docData.amanah;
+                                
+                                console.log('🔍 نوع العنصر:', { 
+                                    isHealthCertificate, 
+                                    isMedicalLeave, 
+                                    hasAmanah: !!docData.amanah,
+                                    hasUniqueId: !!docData.uniqueId,
+                                    hasIdNumber: !!docData.idNumber 
+                                });
+                                
                                 await window.firebaseModules.updateDoc(docRef, {
                                     deleted: false,
                                     deletedAt: null,
                                     restoredAt: new Date().toISOString()
                                 });
                                 restored = true;
-                                console.log('✅ تم استعادة العنصر في Firebase');
+                                
+                                if (isHealthCertificate) {
+                                    console.log('✅ تم استعادة الشهادة الصحية في Firebase');
+                                    // إعادة تحميل الشهادات فقط
+                                    setTimeout(() => loadCertificatesFromFirebase(), 500);
+                                } else if (isMedicalLeave) {
+                                    console.log('✅ تم استعادة الإجازة المرضية في Firebase');
+                                    // إعادة تحميل الإجازات المرضية فقط
+                                    setTimeout(() => loadMedicalLeavesFromFirebase(), 500);
+                                } else {
+                                    console.log('✅ تم استعادة العنصر في Firebase');
+                                    // إعادة تحميل كل شيء
+                                    setTimeout(() => {
+                                        loadCertificatesFromFirebase();
+                                        loadMedicalLeavesFromFirebase();
+                                    }, 500);
+                                }
                             } else {
                                 console.log('⚠️ لم يتم العثور على العنصر في Firebase');
                             }
@@ -2083,10 +2559,8 @@
                         console.log('⚠️ لم يتم العثور على إجازة مرضية محذوفة بهذا المعرف');
                     }
                     
-                    // تحديث العرض
+                    // تحديث العرض - المحذوفات فقط (البيانات الأخرى تتحدث في Firebase)
                     loadDeletedItems();
-                    loadCertificates();
-                    loadMedicalLeaves();
                     
                     alert('تم استعادة العنصر بنجاح!');
                     
