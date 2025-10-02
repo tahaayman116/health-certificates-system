@@ -1,5 +1,9 @@
-# إعادة توجيه HTTP إلى HTTPS
+# إعادة توجيه HTTP إلى HTTPS (فقط في الإنتاج)
 RewriteEngine On
+# تعطيل إعادة التوجيه للتطوير المحلي
+RewriteCond %{HTTP_HOST} !^localhost
+RewriteCond %{HTTP_HOST} !^127\.0\.0\.1
+RewriteCond %{HTTP_HOST} !\.local$
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
