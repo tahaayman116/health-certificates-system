@@ -7,28 +7,28 @@
     
     <!-- إعدادات الأمان للمتصفح -->
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#498a69" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#3d423d" media="(prefers-color-scheme: dark)">
     <link rel="canonical" href="https://health-certificates-system.netlify.app/admin-dashboard.html">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f5f7fa;
+            background-color: #3d423d;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
+            color: #ffffff;
         }
         
         .navbar {
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border-bottom: 3px solid #007bff;
+            background: #498a69;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border-bottom: 3px solid #708556;
         }
         
         .navbar-brand {
             font-weight: 600;
             font-size: 1.4rem;
-            color: #007bff !important;
+            color: #fff !important;
         }
         
         .main-container {
@@ -38,12 +38,14 @@
         .card {
             border: none;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background-color: #4a4f4a;
+            color: #ffffff;
             margin-bottom: 20px;
         }
         
         .card-header {
-            background: #007bff;
+            background: #708556;
             color: white;
             border-radius: 8px 8px 0 0 !important;
             padding: 15px 20px;
@@ -90,22 +92,24 @@
         }
         
         .table {
-            background: white;
+            background: #4a4f4a;
             border-radius: 8px;
             overflow: hidden;
+            color: #ffffff;
         }
         
         .table th {
-            background: #f8f9fa;
+            background: #708556;
             border: none;
             font-weight: 600;
-            color: #495057;
+            color: #fff;
         }
         
         .table td {
             border: none;
-            border-bottom: 1px solid #f1f3f4;
+            border-bottom: 1px solid #5a5f5a;
             vertical-align: middle;
+            color: #ffffff;
         }
         
         .image-preview {
@@ -146,7 +150,7 @@
         }
         
         .stats-card {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: linear-gradient(135deg, #498a69 0%, #3a6b52 100%);
             color: white;
             text-align: center;
             padding: 30px;
@@ -166,16 +170,18 @@
         }
         
         .table thead th {
-            background-color: #f8f9fa;
+            background-color: #708556;
             border: none;
             font-weight: 600;
             padding: 15px;
+            color: #fff;
         }
         
         .table tbody td {
             padding: 15px;
             vertical-align: middle;
-            border-color: #f1f3f4;
+            border-color: #5a5f5a;
+            color: #ffffff;
         }
         
         .certificate-image {
@@ -270,7 +276,97 @@
         
         /* تحسين الجدول */
         .table-hover tbody tr:hover {
-            background-color: #f8f9fa;
+            background-color: #5a5f5a;
+        }
+        
+        /* ألوان النصوص المحسنة */
+        .text-muted {
+            color: #d0d0d0 !important;
+        }
+        
+        .small, small {
+            color: #e0e0e0 !important;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: #ffffff !important;
+        }
+        
+        /* ألوان الأزرار المحسنة */
+        .btn-primary {
+            background-color: #708556;
+            border-color: #708556;
+        }
+        
+        .btn-primary:hover {
+            background-color: #5a6b44;
+            border-color: #5a6b44;
+        }
+        
+        .btn-outline-primary {
+            color: #708556;
+            border-color: #708556;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: #708556;
+            border-color: #708556;
+            color: #fff;
+        }
+        
+        /* ألوان التبويبات */
+        .nav-tabs .nav-link {
+            color: #ffffff;
+            border-color: transparent;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            background-color: #708556;
+            border-color: #708556;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: #ffffff;
+            border-color: #5a5f5a;
+            background-color: rgba(112, 133, 86, 0.2);
+        }
+        
+        /* تحسين ألوان الفورم */
+        .form-label {
+            color: #ffffff !important;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background-color: #5a5f5a;
+            border-color: #708556;
+            color: #ffffff;
+        }
+        
+        .form-control:focus {
+            background-color: #5a5f5a;
+            border-color: #708556;
+            color: #ffffff;
+            box-shadow: 0 0 0 0.2rem rgba(112, 133, 86, 0.25);
+        }
+        
+        .form-control::placeholder {
+            color: #d0d0d0;
+        }
+        
+        /* تخصيص لون رابط الإجازات المرضية */
+        .navbar-nav a[href="/medical-leaves.html"] {
+            color: #ff6b7a !important;
+            font-weight: bold !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        }
+        
+        .navbar-nav a[href="/medical-leaves.html"]:hover {
+            color: #ff8a96 !important;
+            background-color: rgba(255, 107, 122, 0.15) !important;
+            transform: scale(1.05);
+            transition: all 0.2s ease;
         }
         
         .btn-group .btn {
@@ -474,7 +570,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="stats-card" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
+                <div class="stats-card" style="background: linear-gradient(135deg, #708556 0%, #5a6b44 100%);">
                     <div class="stats-number" id="todayCertificates">0</div>
                     <div>شهادات اليوم</div>
                 </div>
@@ -484,13 +580,13 @@
         <!-- Medical Leaves Statistics -->
         <div class="row mb-4">
             <div class="col-md-6">
-                <div class="stats-card" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
+                <div class="stats-card" style="background: linear-gradient(135deg, #6ba085 0%, #5a8a70 100%);">
                     <div class="stats-number" id="totalMedicalLeaves">0</div>
                     <div>إجمالي الإجازات المرضية</div>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="stats-card" style="background: linear-gradient(135deg, #dc3545 0%, #a71e2a 100%);">
+                <div class="stats-card" style="background: linear-gradient(135deg, #8c515b 0%, #6d3e47 100%);">
                     <div class="stats-number" id="todayMedicalLeaves">0</div>
                     <div>إجازات مرضية اليوم</div>
                 </div>
