@@ -1,5 +1,6 @@
-# إعادة توجيه HTTP إلى HTTPS في Netlify
-http://health-certificates-system.netlify.app/* https://health-certificates-system.netlify.app/:splat 301!
+# إعادة توجيه HTTP إلى HTTPS في Netlify (لجميع النطاقات)
+http://:domain/* https://:domain/:splat 301!
+http://www.:domain/* https://www.:domain/:splat 301!
 
 # إعادة توجيه للصفحة الرئيسية
 /admin /admin-dashboard.html 200
