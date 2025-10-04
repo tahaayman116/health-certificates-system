@@ -156,6 +156,7 @@
             // التحقق من بيانات الدخول
             if (username === 'admin' && password === 'taha2025') {
                 // حفظ حالة تسجيل الدخول
+                localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('adminLoggedIn', 'true');
                 localStorage.setItem('loginTime', new Date().getTime());
                 
@@ -167,9 +168,9 @@
                     </div>
                 `;
                 
-                // التحويل إلى لوحة التحكم
+                // التحويل إلى صفحة اختيار قسم العمل
                 setTimeout(() => {
-                    window.location.href = 'admin-dashboard.html';
+                    window.location.replace('work-selection.html');
                 }, 1500);
                 
             } else {
@@ -195,9 +196,9 @@
             const currentTime = new Date().getTime();
             const hoursPassed = (currentTime - loginTime) / (1000 * 60 * 60);
             
-            // إذا مر أقل من 24 ساعة، توجه مباشرة للوحة التحكم
+            // إذا مر أقل من 24 ساعة، توجه مباشرة لصفحة الاختيار
             if (hoursPassed < 24) {
-                window.location.href = 'admin-dashboard.html';
+                window.location.replace('work-selection.html');
             } else {
                 // انتهت صلاحية الجلسة
                 localStorage.removeItem('adminLoggedIn');

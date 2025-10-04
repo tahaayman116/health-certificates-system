@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فتح الموقع</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #3d423d;
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #4a4f4a;
+            padding: 40px;
+            border-radius: 15px;
+        }
+        .btn {
+            background: #708556;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #5a6b44;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: #498a69;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 نظام الشهادات الصحية</h1>
+        <div class="status" id="status">جاري التحقق من الخادم...</div>
+        
+        <div id="links" style="display: none;">
+            <h3>اختر طريقة الوصول:</h3>
+            <a href="http://localhost:8080/admin-login.html" class="btn" target="_blank">
+                🔗 فتح بـ HTTP العادي
+            </a>
+            <br>
+            <a href="http://127.0.0.1:8080/admin-login.html" class="btn" target="_blank">
+                🔗 فتح بـ IP المحلي
+            </a>
+            <br>
+            <button class="btn" onclick="openInNewWindow()">
+                🪟 فتح في نافذة جديدة
+            </button>
+        </div>
+        
+        <div id="instructions">
+            <h3>إذا لم يعمل:</h3>
+            <ol style="text-align: right;">
+                <li>تأكد أن الخادم يعمل على البورت 8080</li>
+                <li>في Chrome، اذهب إلى chrome://flags/</li>
+                <li>ابحث عن "Insecure origins treated as secure"</li>
+                <li>أضف: http://localhost:8080</li>
+                <li>أعد تشغيل Chrome</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // التحقق من حالة الخادم
+        function checkServer() {
+            const status = document.getElementById('status');
+            const links = document.getElementById('links');
+            
+            // محاولة الوصول للخادم
+            fetch('http://localhost:8080/')
+                .then(response => {
+                    if (response.ok) {
+                        status.innerHTML = '✅ الخادم يعمل بشكل طبيعي!';
+                        status.style.background = '#498a69';
+                        links.style.display = 'block';
+                    } else {
+                        throw new Error('Server not responding');
+                    }
+                })
+                .catch(error => {
+                    status.innerHTML = '❌ الخادم غير متاح. تأكد من تشغيله أولاً.';
+                    status.style.background = '#8c515b';
+                    
+                    // عرض الروابط على أي حال
+                    setTimeout(() => {
+                        links.style.display = 'block';
+                    }, 2000);
+                });
+        }
+        
+        // فتح في نافذة جديدة مع إعدادات خاصة
+        function openInNewWindow() {
+            const newWindow = window.open(
+                'http://localhost:8080/admin-login.html',
+                'HealthCertificates',
+                'width=1200,height=800,scrollbars=yes,resizable=yes'
+            );
+            
+            if (newWindow) {
+                newWindow.focus();
+            } else {
+                alert('تم حظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة وإعادة المحاولة.');
+            }
+        }
+        
+        // تشغيل التحقق عند تحميل الصفحة
+        window.onload = function() {
+            checkServer();
+        };
+    </script>
+</body>
+</html>
