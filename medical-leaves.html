@@ -6,10 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الإجازات المرضية - نظام إدارة الشهادات الصحية</title>
     
-    <!-- منع الـ cache -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <!-- منع الـ cache بقوة -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
+    <meta http-equiv="If-Modified-Since" content="0">
+    <meta http-equiv="Etag" content="0">
+    <meta http-equiv="If-None-Match" content="0">
     <meta name="theme-color" content="#000000">
 	<link rel="icon" href="./medical-leaves/seha_logo.svg">
 	<link rel="apple-touch-icon" href="./medical-leaves/seha_logo.svg">
@@ -95,21 +99,64 @@
                                     <button id="inquiry-btn" class="btn btn-primary" style="margin-top: 10px;" onclick="submitInquiry()">استعلام</button>
                                     
                                     <script>
+                                        // منع الـ cache بقوة
+                                        if ('serviceWorker' in navigator) {
+                                            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                                                for(let registration of registrations) {
+                                                    registration.unregister();
+                                                }
+                                            });
+                                        }
+                                        
+                                        // مسح جميع أنواع الـ cache
+                                        if ('caches' in window) {
+                                            caches.keys().then(function(names) {
+                                                for (let name of names) {
+                                                    caches.delete(name);
+                                                }
+                                            });
+                                        }
+                                        
                                         // إزالة أي قيود maxlength قد تكون مضافة ديناميكياً
                                         document.addEventListener('DOMContentLoaded', function() {
+                                            console.log('🔄 بدء إزالة قيود الحقول...');
+                                            
                                             const serviceCodeInput = document.getElementById('service_code');
                                             const idNumberInput = document.getElementById('id_number');
                                             
                                             if (serviceCodeInput) {
                                                 serviceCodeInput.removeAttribute('maxlength');
                                                 serviceCodeInput.removeAttribute('pattern');
-                                                console.log('تم إزالة قيود رمز الخدمة');
+                                                serviceCodeInput.setAttribute('maxlength', '999999');
+                                                serviceCodeInput.removeAttribute('maxlength');
+                                                console.log('✅ تم إزالة قيود رمز الخدمة');
                                             }
                                             
                                             if (idNumberInput) {
                                                 idNumberInput.removeAttribute('maxlength');
                                                 idNumberInput.removeAttribute('pattern');
-                                                console.log('تم إزالة قيود رقم الهوية');
+                                                idNumberInput.setAttribute('maxlength', '999999');
+                                                idNumberInput.removeAttribute('maxlength');
+                                                console.log('✅ تم إزالة قيود رقم الهوية');
+                                            }
+                                            
+                                            // إعادة تطبيق الإزالة كل ثانية للتأكد
+                                            setInterval(function() {
+                                                if (serviceCodeInput && serviceCodeInput.hasAttribute('maxlength')) {
+                                                    serviceCodeInput.removeAttribute('maxlength');
+                                                    console.log('🔄 إعادة إزالة قيود رمز الخدمة');
+                                                }
+                                                if (idNumberInput && idNumberInput.hasAttribute('maxlength')) {
+                                                    idNumberInput.removeAttribute('maxlength');
+                                                    console.log('🔄 إعادة إزالة قيود رقم الهوية');
+                                                }
+                                            }, 1000);
+                                        });
+                                        
+                                        // إجبار إعادة تحميل الصفحة بدون cache
+                                        window.addEventListener('beforeunload', function() {
+                                            if (performance.navigation.type === 1) {
+                                                window.location.reload(true);
                                             }
                                         });
                                     </script>
