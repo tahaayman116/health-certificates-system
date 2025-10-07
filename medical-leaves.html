@@ -85,14 +85,34 @@
                             <div class="col-md-5 p-4">
                                 <!-- Results Section -->
                                 <div class="inquiry-form-group">
-                                    <input type="text" id="service_code" placeholder="رمز الخدمة" class="form-control" required><br>   
+                                    <input type="text" id="service_code" placeholder="رمز الخدمة" class="form-control" required autocomplete="off"><br>   
                 
-                                    <input type="text" id="id_number" placeholder="رقم الهوية / الإقامة" class="form-control" required>  
+                                    <input type="text" id="id_number" placeholder="رقم الهوية / الإقامة" class="form-control" required autocomplete="off">  
                                    
                                     <div id="error-message" class="alert alert-danger" style="display: none;"> لا يوجد نتائج </div>
                                        
                                    
                                     <button id="inquiry-btn" class="btn btn-primary" style="margin-top: 10px;" onclick="submitInquiry()">استعلام</button>
+                                    
+                                    <script>
+                                        // إزالة أي قيود maxlength قد تكون مضافة ديناميكياً
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const serviceCodeInput = document.getElementById('service_code');
+                                            const idNumberInput = document.getElementById('id_number');
+                                            
+                                            if (serviceCodeInput) {
+                                                serviceCodeInput.removeAttribute('maxlength');
+                                                serviceCodeInput.removeAttribute('pattern');
+                                                console.log('تم إزالة قيود رمز الخدمة');
+                                            }
+                                            
+                                            if (idNumberInput) {
+                                                idNumberInput.removeAttribute('maxlength');
+                                                idNumberInput.removeAttribute('pattern');
+                                                console.log('تم إزالة قيود رقم الهوية');
+                                            }
+                                        });
+                                    </script>
                                     
                                     <div style="margin-top: 10px;">
                                         <a id="back-btn" class="btn btn-primary" href="#" onclick="window.location.reload()">رجوع للاستعلامات</a>
