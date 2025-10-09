@@ -1,0 +1,9 @@
+Contact: mailto:admin@seha-system.com
+Preferred-Languages: ar, en
+Canonical: https://seha-inquiry-system.netlify.app/.well-known/security.txt
+Policy: https://seha-inquiry-system.netlify.app/privacy-policy.html
+Hiring: https://seha-inquiry-system.netlify.app/careers.html
+
+# This is a legitimate healthcare inquiry system
+# Licensed by Saudi Ministry of Health
+# For official medical leave and health certificate inquiries only

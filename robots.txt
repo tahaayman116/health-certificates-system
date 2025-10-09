@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin-*
+Disallow: /firebase-*
+
+# Sitemap
+Sitemap: https://seha-inquiry-system.netlify.app/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Host
+Host: https://seha-inquiry-system.netlify.app
