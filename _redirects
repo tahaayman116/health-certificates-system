@@ -1,6 +1,5 @@
-# إعادة توجيه HTTP إلى HTTPS في Netlify (لجميع النطاقات)
-http://:domain/* https://:domain/:splat 301!
-http://www.:domain/* https://www.:domain/:splat 301!
+# إعادة توجيه HTTP إلى HTTPS (يتم تلقائياً في Netlify)
+# Force HTTPS is enabled in Netlify settings
 
 # إعادة توجيه للصفحة الرئيسية
 /admin /admin-dashboard.html 200
@@ -10,6 +9,11 @@ http://www.:domain/* https://www.:domain/:splat 301!
 /certificates /certificate.html 200
 /medical-leaves /medical-leaves.html 200
 /search /1.html 200
+/about /about.html 200
+/privacy /privacy-policy.html 200
 
-# حماية من 404
-/* /index.html 200
+# إعادة توجيه للصفحة الرئيسية
+/ /admin-login.html 200
+
+# حماية من 404 - توجيه للصفحة الرئيسية
+/* /admin-login.html 404
